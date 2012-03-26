@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd" version="1.0">
+	<sql-result-set-mapping name="profile">
+		<column-result name="uid"/>
+		<column-result name="firstname"/>
+		<column-result name="lastname"/>
+		<column-result name="lfsworldName"/>
+	</sql-result-set-mapping>
+	<sql-result-set-mapping name="profileValue">
+		<column-result name="value"/>
+	</sql-result-set-mapping>
+	<sql-result-set-mapping name="fastestLap">
+		<entity-result entity-class="org.openbakery.racecontrol.data.Driver"/>
+		<entity-result entity-class="org.openbakery.racecontrol.data.Lap"/>
+	</sql-result-set-mapping>
+</entity-mappings>

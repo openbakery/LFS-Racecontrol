@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+</head>
+  <body>
+    <wicket:extend>
+      
+      <div wicket:id="description" id="description"></div>
+      
+      <table class="tracker">
+        <tbody>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Car</th>
+            <th>Time</th>
+            <th>Gap previous</th>
+            <th>Gap first</th>
+            <th colspan="4">Sector Times</th>
+          </tr>
+          <tr wicket:id="laps">
+            <td wicket:id="position">position</td>
+            <td wicket:id="name">name</td>
+            <td wicket:id="car">car</td>
+            <td wicket:id="time">time</td>
+            <td wicket:id="gap" class="gap">gap</td>
+            <td wicket:id="gapAll" class="gap">gapAll</td>
+            <td wicket:id="splits"><span wicket:id="split"/></td>
+          </tr>
+        </tbody>
+      </table>
+    </wicket:extend>
+  </body>
+</html>

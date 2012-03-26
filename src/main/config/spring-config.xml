@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	
+	<context:annotation-config/>
+	<context:component-scan base-package="org.openbakery.racecontrol"/>
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:raceControl.properties</value>
+		</property>
+	</bean>
+	
+	<bean id="jInSimClient" class="org.openbakery.racecontrol.JInSimClient" scope="singleton">
+		<constructor-arg type="java.lang.String" value="${name}"/>
+		<constructor-arg type="java.lang.String" value="${hostname}"/>
+		<constructor-arg type="int" value="${port}"/>
+		<constructor-arg type="java.lang.String" value="${password}"/>
+	</bean>
+	
+	<bean id="raceControl" class="org.openbakery.racecontrol.RaceControl" scope="singleton" destroy-method="exit">
+		<property name="persistence" ref="${persistence}"/>
+		<property name="client" ref="jInSimClient"/>
+		<property name="lapEventListener">
+			<list>
+				<ref bean="board"/>
+			</list>
+		</property>
+		<property name="raceEventListener">
+			<list>
+				<ref bean="board"/>
+			</list>
+		</property>
+		<property name="plugins">
+			<list>
+				<ref bean="adminMessages"/>
+				<!-- ref bean="welcomeMessage"/ -->
+				<ref bean="board"/>
+				<ref bean="tracker"/>
+				<ref bean="profileHelper"/>
+				<ref bean="penalty"/>
+				<ref bean="live"/>
+				<ref bean="rcsv"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="board" class="org.openbakery.racecontrol.plugin.Board">
+		<constructor-arg type="org.openbakery.racecontrol.persistence.Persistence" ref="${persistence}"/>
+	</bean>
+	
+	<bean id="tracker" class="org.openbakery.racecontrol.plugin.tracker.Tracker">
+	</bean>
+	
+	<bean id="adminMessages" class="org.openbakery.racecontrol.plugin.admin.messages.AdminMessages">
+		<property name="raceControl" ref="raceControl"/>
+	</bean>
+
+<!--	
+	<bean id="welcomeMessage" class="org.openbakery.racecontrol.plugin.WelcomeMessage">
+		<constructor-arg type="java.lang.String" value="${welcome.message}"/>
+	</bean>
+-->
+	<!--
+	<bean id="ButtonTest" class="org.openbakery.racecontrol.plugin.ButtonTest">
+	</bean>
+-->
+	
+<!--
+	<bean id="profileHelper" class="org.openbakery.racecontrol.persistence.DrupalHelper">
+		<constructor-arg type="org.openbakery.racecontrol.persistence.Persistence" ref="${persistence}"/>
+	</bean>
+-->
+
+	<bean id="profileHelper" class="org.openbakery.racecontrol.plugin.profile.DriverProfilePlugin">
+	</bean>
+	<bean id="penalty" class="org.openbakery.racecontrol.plugin.penalty.PenaltyPlugin">
+	</bean>
+	
+	<bean id="live" class="org.openbakery.racecontrol.plugin.live.LivePlugin">
+	</bean>
+
+	<bean id="rcsv" class="org.openbakery.racecontrol.plugin.rcsv.RCSVPlugin">
+	</bean>
+
+
+	<bean id="queryHelper" class="org.openbakery.racecontrol.persistence.QueryHelper">
+		<constructor-arg type="org.openbakery.racecontrol.persistence.Persistence" ref="${persistence}"/>
+	</bean>
+<!--	
+	<bean id="file" class="org.openbakery.racecontrol.persistence.FilePersistence">
+	</bean>
+-->
+	<bean id="database" class="org.openbakery.racecontrol.persistence.DatabasePersistence">
+		<!--<constructor-arg value="racecontrol-hsqldb"/> -->
+		<constructor-arg value="racecontrol-mysql"/>
+		<qualifier type="Database"/>
+	</bean>
+
+
+	<bean id="serviceLocator" class="org.openbakery.racecontrol.service.ServiceLocator">
+	</bean>
+	
+	<bean id="adminMessage" class="org.openbakery.racecontrol.plugin.admin.messages.service.AdminMessagesService">
+		<property name="persistence" ref="${persistence}"/>
+	</bean>
+	
+	<bean id="loginService" class="org.openbakery.racecontrol.service.LoginService">
+		<property name="username" value="${admin.username}"/>
+		<property name="password" value="${admin.password}"/>
+	</bean>
+	
+	<bean id="raceService" class="org.openbakery.racecontrol.service.RaceService">
+		<property name="client" ref="jInSimClient"/>
+		<property name="raceControl" ref="raceControl"/>
+	</bean>
+	
+	<bean id="databaseService" class="org.openbakery.racecontrol.service.DatabaseService">
+		<property name="queryHelper" ref="queryHelper"/>
+		<property name="profileHelper" ref="profileHelper"/>
+	</bean>
+	
+	<bean id="settingsService" class="org.openbakery.racecontrol.service.SettingsService">
+	</bean>
+	
+	<bean id="settingsLoader" class="org.openbakery.racecontrol.service.SettingsLoader">
+		<constructor-arg type="java.lang.String" value="${settings.path}"/>
+	</bean>
+	
+	<bean id="trackerService" class="org.openbakery.racecontrol.plugin.tracker.TrackerService">
+	</bean>
+	
+	<bean id="driverProfileService" class="org.openbakery.racecontrol.plugin.profile.service.DriverProfileService">
+		<property name="persistence" ref="${persistence}"/>
+	</bean>
+
+	<bean id="penaltyService" class="org.openbakery.racecontrol.plugin.penalty.service.PenaltyService">
+	</bean>
+	
+	<bean id="liveService" class="org.openbakery.racecontrol.plugin.live.service.LiveService">
+	</bean>
+
+	<bean id="raceEntryService" class="org.openbakery.racecontrol.service.RaceEntryService">
+	</bean>
+	
+	
+
+	
+</beans>

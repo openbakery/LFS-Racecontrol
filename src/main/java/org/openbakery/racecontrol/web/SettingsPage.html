@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+</head>
+<body>
+
+  <wicket:extend>
+    <span wicket:id="serverStatus"></span>
+  
+    <form wicket:id="form">
+      <div>
+        <span class="label">Name</span>
+        <input wicket:id="name" type="text"/>
+      </div>
+      <div>
+        <span class="label">Hostname</span>
+        <input wicket:id="hostname" type="text"/>
+      </div>
+      <div>
+        <span class="label">Port</span>
+        <input wicket:id="port" type="text"/>
+      </div>
+      <div>
+        <span class="label">Admin Password</span>
+        <input wicket:id="adminPassword" type="password"/>
+      </div>
+      <div>
+        <span class="label">&nbsp;</span>
+        <input type="button" wicket:id="stop" value="Stop" />   
+        <input type="submit" wicket:id="start" value="Start" />
+      </div>
+    </form>
+  </wicket:extend>
+</body>
+</html>

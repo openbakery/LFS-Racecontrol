@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>RaceControl</title>
+</head>
+  <body>
+    <wicket:extend>
+      <form wicket:id="form">
+        <table class="adminMessages">
+          <tbody>
+            <tr>
+              <th>Firstname</th>
+              <th>Lastname</th>
+              <th>LFSWorld Name</th>
+              <th>&nbsp</th>
+            </tr>
+            <tr wicket:id="adminMessages">
+              <td wicket:id="firstname">firstname</td>
+              <td wicket:id="lastname">lastname</td>
+              <td wicket:id="lfsworldName">lfsworldName</td>
+              <td>
+                <a class="button" href="#" wicket:id="edit">Edit</a>
+                <a class="button" href="#" wicket:id="delete">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div>
+          <input type="submit" wicket:id="add" value="add" />
+        </div>
+      </form>
+    </wicket:extend>
+  </body>
+</html>

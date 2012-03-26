@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+</head>
+  <body>
+    <wicket:extend>
+      
+      
+      <table class="tracker">
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Lap</th>
+            <th>Race-Time</th>
+            <th>Lap-Time</th>
+          </tr>
+          <tr wicket:id="liveTiming">
+            <td wicket:id="position">position</td>
+            <td wicket:id="name">name</td>
+            <td wicket:id="lapnumber">lapnumber</td>
+            <td wicket:id="totaltime">totalTime</td>
+            <td wicket:id="laptime">laptime</td>
+          </tr>
+        </tbody>
+      </table>
+    </wicket:extend>
+  </body>
+</html>

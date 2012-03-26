@@ -1,0 +1,83 @@
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.6
+version = '1.0.1'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Racecontrol', 'Implementation-Version': version
+    }
+}
+
+configurations{
+    //declare custom config if necessary, otherwise just use compile
+    libs
+}
+
+repositories {
+    mavenCentral()
+	 	maven {
+    	url "http://repository.jboss.org/nexus/content/groups/public-jboss"
+    	url "http://repository.apache.org/snapshots"
+			url "http://openbakery.org/repository/"
+	  }
+}
+
+ext.wicketVersion = '1.5.+'
+ext.springVersion = '3.+'
+ext.hibernateVersion = '3.+'
+ext.hsqldbVersion = '2.+'
+ext.logbackVersion = '1.0.+'
+ext.testngVersion = '6.0.+'
+ext.commonsLangVersion = '2.6'
+// jodatimeVersion = '1.6.+'
+// guavaVersion = 'r09'
+// commonsCodecVersion = '1.5'
+ext.servletVersion = '2.+'
+ext.jinsimVersion = '6.+'
+ext.commonsConfiguration = '1.8'
+ext.commonsBeanutils = '1.8.+'
+ext.mysqlVersion = '5.1.+'
+
+dependencies {
+		libs fileTree(dir: 'libs', include: '*.jar')
+
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    compile group: 'org.springframework', name: 'spring-test', version: springVersion
+    compile group: 'org.apache.wicket', name: 'wicket-core', version: wicketVersion
+    compile group: 'org.apache.wicket', name: 'wicket-spring', version: wicketVersion
+    compile group: 'org.apache.wicket', name: 'wicket-datetime', version: wicketVersion
+//    compile group: 'org.hibernate', name: 'hibernate-annotations', version: hibernateVersion
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion
+    compile group: 'org.hibernate', name: 'hibernate-c3p0', version: hibernateVersion
+    compile group: 'org.hsqldb', name: 'hsqldb', version: hsqldbVersion
+    compile group: 'mysql', name: 'mysql-connector-java', version: mysqlVersion
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+		compile group: 'net.sf.jinsim', name: 'jinsim', version: jinsimVersion
+//    compile group: 'joda-time', name: 'joda-time', version: jodatimeVersion
+//    compile group: 'com.google.guava', name: 'guava', version: guavaVersion
+//    compile group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion
+	compile group: 'commons-lang', name: 'commons-lang', version: commonsLangVersion
+	compile group: 'commons-configuration', name: 'commons-configuration', version: commonsConfiguration
+	compile group: 'commons-beanutils', name: 'commons-beanutils', version: commonsBeanutils
+    testCompile group: 'org.testng', name: 'testng', version: testngVersion
+    compile group: 'javax.servlet', name: 'servlet-api', version: servletVersion
+}
+
+sourceSets {
+	main {
+    resources {
+  		srcDir 'src/main/config'
+  		srcDir 'src/main/java'
+		}
+	}
+}
+
+test {
+  useTestNG()
+}

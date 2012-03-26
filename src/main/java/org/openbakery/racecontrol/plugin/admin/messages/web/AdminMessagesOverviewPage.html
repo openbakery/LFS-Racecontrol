@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>RaceControl</title>
+</head>
+  <body>
+    <wicket:extend>
+      <form wicket:id="form">
+        <table class="adminMessages">
+          <tbody>
+            <tr>
+              <th>Key</th>
+              <th>Message</th>
+              <th>Duration</th>
+              <th>Countdown</th>
+              <th>&nbsp;</th>
+            </tr>
+            <tr wicket:id="adminMessages">
+              <td wicket:id="key">key</td>
+              <td wicket:id="message">message</td>
+              <td wicket:id="duration">duration</td>
+              <td wicket:id="countdown">countdown</td>
+              <td>
+                <a class="button" href="#" wicket:id="send">Send</a>
+                <a class="button" href="#" wicket:id="edit">Edit</a>
+                <a class="button" href="#" wicket:id="delete">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div>
+          <input type="submit" wicket:id="add" value="add" />
+          <input type="submit" wicket:id="hideAll" value="Hide all Message" />
+        </div>
+      </form>
+    </wicket:extend>
+  </body>
+</html>
