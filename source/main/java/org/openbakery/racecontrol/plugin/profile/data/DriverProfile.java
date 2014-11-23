@@ -36,6 +36,9 @@ public class DriverProfile implements Serializable {
 	@Column(name = "lfsworldname")
 	private String lfsworldName;
 
+	@Column(name ="signedUp")
+	private boolean signedUp;
+
 	public DriverProfile() {
 	}
 
@@ -61,6 +64,14 @@ public class DriverProfile implements Serializable {
 
 	public void setLfsworldName(String lfsworldName) {
 		this.lfsworldName = lfsworldName;
+	}
+
+	public boolean isSignedUp() {
+		return signedUp;
+	}
+
+	public void setSignedUp(boolean signedUp) {
+		this.signedUp = signedUp;
 	}
 
 	public Profile getProfile() {

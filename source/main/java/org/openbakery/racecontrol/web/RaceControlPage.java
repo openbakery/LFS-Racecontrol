@@ -1,7 +1,6 @@
 package org.openbakery.racecontrol.web;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -10,7 +9,6 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.openbakery.racecontrol.web.bean.MenuItem;
 import org.openbakery.racecontrol.web.bean.Visibility;
 
@@ -30,18 +28,20 @@ public abstract class RaceControlPage extends WebPage {
 			add(new RepeatingView("menu"));
 			return;
 		}
+
+
+
 		add(createMenu());
 	}
 
 
-  @Override
-  public void renderHead(IHeaderResponse response) {
-    super.renderHead(response);
-    //response.renderCSSReference(new PackageResourceReference(RaceControlPage.class, "/style.css"));
-  }
 
 	private RepeatingView createMenu() {
+
 		RepeatingView menu = new RepeatingView("menu");
+		if (!getSession().isLoggedIn()) {
+			return menu;
+		}
 
 		for (MenuItem item : getSession().getMenuItems()) {
 			if (!getSession().isLoggedIn() && item.getVisibility() == Visibility.AUTHENTICATED) {

@@ -13,9 +13,13 @@ import org.openbakery.racecontrol.persistence.QueryHelper;
 import org.openbakery.racecontrol.persistence.bean.Profile;
 import org.openbakery.racecontrol.plugin.tracker.data.TrackerSettings;
 import org.openbakery.racecontrol.service.SettingsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TrackerService {
+
+	private static Logger log = LoggerFactory.getLogger(TrackerService.class);
 
 	private ProfileHelper profileHelper;
 
@@ -43,13 +47,13 @@ public class TrackerService {
 
 		Track track = settings.getTrack();
 		List<Car> cars = settings.getCars();
-		int signupId = settings.getSignupId();
 
-		return getFastestLap(track, cars, signupId);
+		return getFastestLap(track, cars);
 	}
 
-	public List<Lap> getFastestLap(Track track, List<Car> cars, int signupId) throws PersistenceException {
-		List<Profile> profiles = profileHelper.getSignedUpDrivers(signupId);
+	public List<Lap> getFastestLap(Track track, List<Car> cars) throws PersistenceException {
+		log.debug("getFastestLap");
+		List<Profile> profiles = profileHelper.getSignedUpDrivers();
 		List<Lap> lapList = queryHelper.getFastestsLaps(cars, track, profiles);
 
 		// add drivers that has not driven a lap yet
@@ -59,11 +63,11 @@ public class TrackerService {
 			for (Lap lap : lapList) {
 				if (lap.getDriver().getName().equalsIgnoreCase(name)) {
 					found = true;
-
 				}
 			}
 
 			if (!found) {
+				log.debug("no lap found for driver {} so add empty", profile.getLfsworldName());
 				Lap newLap = new Lap();
 				Driver newDriver = new Driver();
 				newDriver.setName(profile.getLfsworldName());
@@ -75,14 +79,10 @@ public class TrackerService {
 		return lapList;
 	}
 
-	public List<Profile> getSignedUpDrivers(int signupId) throws PersistenceException {
-		return profileHelper.getSignedUpDrivers(signupId);
+	public List<Profile> getSignedUpDrivers() throws PersistenceException {
+		return profileHelper.getSignedUpDrivers();
 	}
 
-	public List<Profile> getSignedUpDrivers() throws PersistenceException {
-		TrackerSettings settings = settingsService.getTrackerSettings();
-		return getSignedUpDrivers(settings.getSignupId());
-	}
 
 	public Track getTrack() {
 		TrackerSettings settings = settingsService.getTrackerSettings();

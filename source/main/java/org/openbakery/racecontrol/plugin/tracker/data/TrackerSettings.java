@@ -21,8 +21,6 @@ public class TrackerSettings implements Settings {
 
 	public Track track;
 
-	public int signupId;
-
 	public TrackerSettings() {
 		cars = new LinkedList<Car>();
 	}
@@ -42,14 +40,6 @@ public class TrackerSettings implements Settings {
 		cars.add(car);
 	}
 
-	public int getSignupId() {
-		return signupId;
-	}
-
-	public void setSignupId(int signupId) {
-		this.signupId = signupId;
-	}
-
 	public Track getTrack() {
 		return track;
 	}
@@ -59,7 +49,7 @@ public class TrackerSettings implements Settings {
 	}
 
 	public List<String> getSettingFields() {
-		return Arrays.asList("cars", "track", "signupId");
+		return Arrays.asList("cars", "track");
 	}
 
 }

@@ -23,6 +23,7 @@ public class DriverProfileListView extends ListView<DriverProfile> {
 		item.add(new Label("firstname", message.getFirstname()));
 		item.add(new Label("lastname", message.getLastname()));
 		item.add(new Label("lfsworldName", message.getLfsworldName()));
+		item.add(new Label("signedUp", message.isSignedUp()));
 		item.add(new EditLink("edit", new Model<DriverProfile>(message)));
 		item.add(new DeleteLink("delete", new Model<DriverProfile>(message)));
 	}

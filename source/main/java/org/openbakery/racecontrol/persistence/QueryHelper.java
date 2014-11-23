@@ -244,6 +244,8 @@ public class QueryHelper {
 
 			lapList.add(lap);
 		}
+
+
 		Collections.sort(lapList, new LapComparator());
 		return lapList;
 	}

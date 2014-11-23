@@ -27,11 +27,8 @@
 	<logger name="org.apache.wicket">
 		<level value="info" />
 	</logger>
-
-    <logger name="org.hibernate">
-        <level value="error" />
-    </logger>
-
+	
+	
 	<root>
 		<level value="info"/>
 		<appender-ref ref="file"/>

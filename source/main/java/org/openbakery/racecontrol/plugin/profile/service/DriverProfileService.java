@@ -6,9 +6,11 @@ import org.openbakery.racecontrol.persistence.Persistence;
 import org.openbakery.racecontrol.persistence.PersistenceException;
 import org.openbakery.racecontrol.plugin.profile.data.DriverProfile;
 import org.openbakery.racecontrol.plugin.profile.data.TeamProfile;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DriverProfileService {
 
+	@Autowired
 	private Persistence persistence;
 
 	public DriverProfileService() {

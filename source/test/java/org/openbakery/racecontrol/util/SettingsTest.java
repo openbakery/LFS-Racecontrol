@@ -47,7 +47,6 @@ public class SettingsTest {
 	public void testError() throws IOException {
 		Properties properties = new Properties();
 		properties.put("cars", "ASDF");
-		properties.put("signupId", "1");
 		FileOutputStream fos = new FileOutputStream(System.getProperty("java.io.tmpdir") + File.separator
 				+ TrackerSettings.class.getName() + ".properties");
 		properties.store(fos, "");

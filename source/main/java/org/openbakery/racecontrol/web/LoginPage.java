@@ -17,6 +17,7 @@ public class LoginPage extends RaceControlPage {
 	public LoginPage(PageParameters parameters) {
 		super(parameters);
 
+
 		Form<User> form = new Form<User>("form");
 		add(form);
 

@@ -36,10 +36,9 @@ public class TrackerPage extends RaceControlPage {
 
 		TrackerSettings settings = getSession().getServiceLocator().getSettingsService().getTrackerSettings();
 
-		int signupId = 0;
 
     Set<String> keys = parameters.getNamedKeys();
-		if (keys.contains("track") && keys.contains("car") && keys.contains("signupId")) {
+		if (keys.contains("track") && keys.contains("car")) {
 			try {
 
 				track = Track.getTrackByShortName(parameters.get("track").toString());
@@ -48,25 +47,19 @@ public class TrackerPage extends RaceControlPage {
 				for (String carName : carString.split(",")) {
 					cars.add(Car.getCarByName(carName));
 				}
-				try {
-					signupId = parameters.get("signupId").toInt();
-				} catch (StringValueConversionException ex) {
-					error("given signupId is not a number");
-				}
 			} catch (IllegalArgumentException ex) {
 				// error handling is below
 			}
 		} else {
 			track = settings.getTrack();
 			cars = settings.getCars();
-			signupId = settings.getSignupId();
 		}
 
 		String description;
 		List<Lap> lapList = null;
 
-		if (track != null && cars != null && signupId != 0) {
-			lapList = getTrackerService().getFastestLap(track, cars, signupId);
+		if (track != null && cars != null) {
+			lapList = getTrackerService().getFastestLap(track, cars);
 			StringBuilder carString = new StringBuilder();
 			boolean first = true;
 			for (Car car : cars) {
@@ -84,7 +77,7 @@ public class TrackerPage extends RaceControlPage {
 		}
 
 		add(new Label("description", description));
-		List<Profile> profiles = getTrackerService().getSignedUpDrivers(signupId);
+		List<Profile> profiles = getTrackerService().getSignedUpDrivers();
 		log.debug("display laps for: {}", profiles);
 		add(new LapListView("laps", lapList, profiles, track));
 	}

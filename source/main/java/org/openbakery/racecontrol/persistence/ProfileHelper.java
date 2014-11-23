@@ -6,6 +6,6 @@ import org.openbakery.racecontrol.persistence.bean.Profile;
 
 public interface ProfileHelper {
 
-	public List<Profile> getSignedUpDrivers(int signupId) throws PersistenceException;
+	public List<Profile> getSignedUpDrivers() throws PersistenceException;
 
 }

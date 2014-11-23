@@ -32,7 +32,6 @@ public class TrackerSettingsPage extends RaceControlPage {
 		form.add(new CheckBoxMultipleChoice("cars", new PropertyModel(trackerSettings, "cars"), new ArrayList<Car>(EnumSet.allOf(Car.class))));
 
 		form.add(new ListChoice("track", new PropertyModel(trackerSettings, "track"), new ArrayList<Track>(EnumSet.allOf(Track.class))));
-		form.add(new TextField("signupId", new PropertyModel(trackerSettings, "signupId")));
 
 		form.add(new RedirectLink("cancel", TrackerPage.class));
 		form.add(new SaveButton(getSession()));

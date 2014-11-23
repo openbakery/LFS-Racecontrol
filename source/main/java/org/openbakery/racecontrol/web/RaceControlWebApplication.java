@@ -5,6 +5,8 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
+import org.openbakery.racecontrol.plugin.tracker.Tracker;
+import org.openbakery.racecontrol.plugin.tracker.web.TrackerPage;
 import org.openbakery.racecontrol.service.SettingsLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,8 @@ public class RaceControlWebApplication extends WebApplication {
 
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return LoginPage.class;
+		//return LoginPage.class;
+		return TrackerPage.class;
 	}
 
 	@Override
@@ -38,6 +41,14 @@ public class RaceControlWebApplication extends WebApplication {
 		log.debug("WEB-INF path {}", getServletContext().getRealPath("WEB-INF"));
 
 		log.info("Init is called...");
+
+
+		String adminPath = "/admin";
+		mountPage(adminPath + "/login", LoginPage.class);
+		mountPage(adminPath + "/logout", LogoutPage.class);
+		mountPage("/tracker", TrackerPage.class);
+
+
 	}
 
 	@Override

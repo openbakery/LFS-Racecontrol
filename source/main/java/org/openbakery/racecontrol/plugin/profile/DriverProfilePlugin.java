@@ -38,7 +38,7 @@ public class DriverProfilePlugin implements Plugin, ProfileHelper {
 	public void packetReceived(InSimResponse response) {
 	}
 
-	public List<Profile> getSignedUpDrivers(int signupId) throws PersistenceException {
+	public List<Profile> getSignedUpDrivers() throws PersistenceException {
 
 		List<DriverProfile> driverProfileList = driverProfileService.getAllProfiles();
 
