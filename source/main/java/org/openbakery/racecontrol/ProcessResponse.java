@@ -1,6 +1,6 @@
 package org.openbakery.racecontrol;
 
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 
 public interface ProcessResponse<T extends InSimResponse> {

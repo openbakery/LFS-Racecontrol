@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Tiny;
-import net.sf.jinsim.Track;
-import net.sf.jinsim.response.ConnectionLeaveResponse;
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.TinyResponse;
-import net.sf.jinsim.types.InSimTime;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Tiny;
+import org.openbakery.jinsim.Track;
+import org.openbakery.jinsim.response.ConnectionLeaveResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.TinyResponse;
+import org.openbakery.jinsim.types.InSimTime;
 
 import org.openbakery.racecontrol.Race;
 import org.openbakery.racecontrol.data.Driver;
@@ -101,14 +101,14 @@ public class Board implements Plugin, LapEventListener, RaceEventListener {
 
 	private Driver getDriver(int connectionId) {
 		if (race != null) {
-			return race.getDriver(connectionId, "");
+			return race.getDriver(connectionId);
 		}
 		return null;
 	}
 
 	private void updatePanels() {
 		if (race != null) {
-			for (Driver driver : race.getDrivers()) {
+			for (Driver driver : race.getRaceEntry().getDrivers()) {
 				Panel panel = lapTimePanelMap.get(driver.getConnectionId());
 				if (panel != null) {
 					setPanelHeader(panel, driver);

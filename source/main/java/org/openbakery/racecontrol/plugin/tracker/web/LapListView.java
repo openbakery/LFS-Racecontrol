@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Track;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -47,11 +47,11 @@ public class LapListView extends ListView<Lap> {
 		Lap lap = (Lap) item.getModelObject();
 
 		final int index = item.getIndex();
-		int gap = 0;
-		int gapAll = 0;
+		int gapPrevious = 0;
+		int gapFirst = 0;
 		if (index > 0) {
-			gap = lap.getTime() - getList().get(index - 1).getTime();
-			gapAll = lap.getTime() - getList().get(0).getTime();
+			gapPrevious = lap.getTime() - getList().get(index - 1).getTime();
+			gapFirst = lap.getTime() - getList().get(0).getTime();
 		}
 
 		item.add(new Label("position", Integer.toString(index + 1)));
@@ -69,13 +69,15 @@ public class LapListView extends ListView<Lap> {
 
 		item.add(new Label("name", name).setEscapeModelStrings(false));
 		item.add(new Label("car", lap.getDriver().getCarName()));
-		item.add(new Label("time", dateFormat.format(lap.getTime())));
-		if (index > 0 && lap.getTime() > 0) {
-			item.add(new Label("gap", "+" + dateFormatShort.format(gap)));
-			item.add(new Label("gapAll", "+" + dateFormatShort.format(gapAll)));
+		item.add(new Label("time", getTime(lap.getTime())));
+		item.add(new Label("number", lap.getNumber() + "/" + lap.getPosition()));
+
+		if (lap.getTime() == 0) {
+			item.add(new Label("gapPrevious", "-"));
+			item.add(new Label("gapAll", "-"));
 		} else {
-			item.add(new Label("gap", ""));
-			item.add(new Label("gapAll", ""));
+			item.add(new Label("gapPrevious", getTime(gapPrevious)));
+			item.add(new Label("gapAll", getTime(gapFirst)));
 		}
 
 		LinkedList<String> splits = new LinkedList<String>();
@@ -102,11 +104,7 @@ public class LapListView extends ListView<Lap> {
 			}
 		});
 
-		item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
-			public Object getObject() {
-				return (index % 2 == 1) ? "even" : "odd";
-			}
-		}));
+
 
 	}
 
@@ -114,6 +112,10 @@ public class LapListView extends ListView<Lap> {
 		if (time == 0) {
 			return "-";
 		}
+		if (time < 60000) {
+			return dateFormatShort.format(time);
+		}
+
 		return dateFormat.format(time);
 	}
 }

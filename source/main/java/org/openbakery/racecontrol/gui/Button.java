@@ -2,9 +2,9 @@ package org.openbakery.racecontrol.gui;
 
 import java.io.IOException;
 
-import net.sf.jinsim.request.ButtonFunctionRequest;
-import net.sf.jinsim.request.ButtonRequest;
-import net.sf.jinsim.response.InSimListener;
+import org.openbakery.jinsim.request.ButtonFunctionRequest;
+import org.openbakery.jinsim.request.ButtonRequest;
+import org.openbakery.jinsim.response.InSimListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.jinsim.request.MessageRequest;
+import org.openbakery.jinsim.request.MessageRequest;
 
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.gui.ButtonMessageHelper;
@@ -29,7 +29,7 @@ public class PenaltyService {
 	private boolean penaltyActive;
 
 	public synchronized void confirmChatPenalty(int connectionId) {
-		Driver driver = raceService.getRaceControl().getRace().getDriver(connectionId, "");
+		Driver driver = raceService.getRaceControl().getRace().getDriver(connectionId);
 		Penalty penalty = new Penalty(driver, Penalty.Type.DRIVE_THOUGH, Penalty.Reason.CHAT);
 		penaltyToConfirm.add(penalty);
 
@@ -126,7 +126,7 @@ public class PenaltyService {
 	}
 
 	public List<Driver> getDrivers() {
-		return raceService.getRaceControl().getRace().getDrivers();
+		return raceService.getRaceControl().getRace().getRaceEntry().getDrivers();
 	}
 
 }

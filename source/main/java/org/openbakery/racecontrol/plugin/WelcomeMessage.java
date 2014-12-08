@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.NewConnectionResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.NewConnectionResponse;
 
 import org.openbakery.racecontrol.gui.Button;
 import org.openbakery.racecontrol.web.bean.MenuItem;

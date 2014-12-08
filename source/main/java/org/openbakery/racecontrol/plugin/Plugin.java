@@ -2,7 +2,7 @@ package org.openbakery.racecontrol.plugin;
 
 import java.util.List;
 
-import net.sf.jinsim.response.InSimListener;
+import org.openbakery.jinsim.response.InSimListener;
 
 import org.openbakery.racecontrol.web.bean.MenuItem;
 

@@ -65,6 +65,7 @@ public class SettingsPage extends RaceControlProtectedPage {
 			@Override
 			public void onSubmit() {
 				try {
+					log.debug("settings: {}", getClient().getSettings());
 					getRaceControl().start();
 				} catch (IOException e) {
 					error("Cannot connect to the host!");

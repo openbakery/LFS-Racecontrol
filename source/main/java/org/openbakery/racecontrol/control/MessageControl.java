@@ -1,7 +1,7 @@
 package org.openbakery.racecontrol.control;
 
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.MessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.MessageResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -1,10 +1,10 @@
 package org.openbakery.racecontrol.control;
 
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.PitLaneResponse;
-import net.sf.jinsim.response.PitStopFinishedResponse;
-import net.sf.jinsim.response.PitStopResponse;
-import net.sf.jinsim.response.PlayerPitsResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.PitLaneResponse;
+import org.openbakery.jinsim.response.PitStopFinishedResponse;
+import org.openbakery.jinsim.response.PitStopResponse;
+import org.openbakery.jinsim.response.PlayerPitsResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,7 +86,7 @@ public class PitControl extends AbstractControl {
 				Lap lap = driver.getCurrentLap();
 				lap.setPenalty(response.getPenalty());
 				lap.setNumberStops(response.getNumberOfPitstops());
-				net.sf.jinsim.types.Tyres insimTyres = response.getTyres();
+				org.openbakery.jinsim.types.Tyres insimTyres = response.getTyres();
 				lap.setTyres(new Tyres(insimTyres.getRearLeft(), insimTyres.getRearRight(), insimTyres.getFrontLeft(), insimTyres.getFrontRight()));
 				lap.setWork(response.getWork());
 				lap.setPit(true);

@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jinsim.response.ButtonClickedResponse;
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.ButtonClickedResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +50,7 @@ public class AdminMessages implements Plugin {
 		if (response instanceof HiddenMessageResponse) {
 			HiddenMessageResponse hiddenMessageResponse = (HiddenMessageResponse) response;
 			int connectionId = hiddenMessageResponse.getConnectionId();
-			Driver driver = raceControl.getRace().getDriver(connectionId, "");
+			Driver driver = raceControl.getRace().getDriver(connectionId);
 			if (connectionId == 0 || driver.isAdmin()) {
 
 				String message = hiddenMessageResponse.getMessage();

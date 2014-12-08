@@ -5,16 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import net.sf.jinsim.Tiny;
-import net.sf.jinsim.request.TinyRequest;
-import net.sf.jinsim.response.ConnectionCloseResponse;
-import net.sf.jinsim.response.FlagResponse;
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimListener;
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.MultiplayerBeginResponse;
-import net.sf.jinsim.response.PenaltyResponse;
-import net.sf.jinsim.response.StateResponse;
+import org.openbakery.jinsim.Tiny;
+import org.openbakery.jinsim.request.TinyRequest;
+import org.openbakery.jinsim.response.*;
 
 import org.openbakery.racecontrol.control.AbstractControl;
 import org.openbakery.racecontrol.control.LapControl;
@@ -48,11 +41,11 @@ public class RaceControl implements InSimListener, Runnable {
 
 	private Race race;
 
-	private TreeSet<LapEventListener> lapEventListener = new TreeSet<LapEventListener>();
+	private ArrayList<LapEventListener> lapEventListener = new ArrayList<LapEventListener>();
 
-	private TreeSet<RaceEventListener> raceEventListener = new TreeSet<RaceEventListener>();
+	private ArrayList<RaceEventListener> raceEventListener = new ArrayList<RaceEventListener>();
 
-	private TreeSet<CameraEventListener> cameraEventListener = new TreeSet<CameraEventListener>();
+	private ArrayList<CameraEventListener> cameraEventListener = new ArrayList<CameraEventListener>();
 
 	private List<Plugin> plugins;
 
@@ -74,6 +67,7 @@ public class RaceControl implements InSimListener, Runnable {
 		client.connect();
 		client.addListener(this);
 		log.info("Started...");
+		client.send(new TinyRequest(Tiny.RESTART));
 		client.send(new TinyRequest(Tiny.ALL_CONNECTIONS));
 		client.send(new TinyRequest(Tiny.ALL_PLAYERS));
 	}
@@ -87,13 +81,29 @@ public class RaceControl implements InSimListener, Runnable {
 		controlList.clear();
 		client.removeListener(this);
 		client.close();
+
 	}
+
 
 	public boolean isConnected() {
 		return client.isConnected();
 	}
 
 	public void packetReceived(InSimResponse response) {
+		log.debug("packageReceived: {}", response);
+
+		if (response instanceof PlayerResponse) {
+			PlayerResponse playerResponse = (PlayerResponse)response;
+			playerResponse.getPlayerId();
+			Driver driver = race.getDriverByPlayerId(playerResponse.getPlayerId());
+			if (driver == null) {
+				log.debug("Driver unknown: {}", playerResponse);
+			} else {
+				log.debug("Driver {}: {}", driver.getName(), playerResponse);
+			}
+
+		}
+
     for (AbstractControl control : controlList) {
 			control.packetReceived(response);
 		}
@@ -107,7 +117,7 @@ public class RaceControl implements InSimListener, Runnable {
 			} else if (response instanceof HiddenMessageResponse) {
 				HiddenMessageResponse hiddenMessageResponse = (HiddenMessageResponse) response;
 				int connectionId = hiddenMessageResponse.getConnectionId();
-				Driver driver = race.getDriver(connectionId, "");
+				Driver driver = race.getDriver(connectionId);
 				if (connectionId == 0 || driver.isAdmin()) {
 					processCommand(hiddenMessageResponse);
 				}
@@ -120,8 +130,8 @@ public class RaceControl implements InSimListener, Runnable {
 			} else if (response instanceof ConnectionCloseResponse) {
 				stop();
 				log.info("Disconnected from host");
-				Thread.sleep(10000);
-				start();
+				//Thread.sleep(10000);
+				//start();
 			}
 			// else {
 			// log.debug("reponse: " + response);

@@ -1,12 +1,13 @@
 package org.openbakery.racecontrol.plugin.tracker.web;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,14 +32,17 @@ public class TrackerPage extends RaceControlPage {
 
 	private List<Car> cars = null;
 
+	private int numberLaps;
+
 	public TrackerPage(PageParameters parameters) throws PersistenceException {
 		super(parameters);
 
 		TrackerSettings settings = getSession().getServiceLocator().getSettingsService().getTrackerSettings();
+		log.debug("trackerSettings {}", settings);
 
 
     Set<String> keys = parameters.getNamedKeys();
-		if (keys.contains("track") && keys.contains("car")) {
+		if (keys.contains("track") && keys.contains("car") && keys.contains("numberLaps")) {
 			try {
 
 				track = Track.getTrackByShortName(parameters.get("track").toString());
@@ -47,19 +51,25 @@ public class TrackerPage extends RaceControlPage {
 				for (String carName : carString.split(",")) {
 					cars.add(Car.getCarByName(carName));
 				}
+				try {
+					numberLaps = parameters.get("numberLaps").toInt();
+				} catch (StringValueConversionException ex) {
+					error("given numberLaps is not a number");
+				}
 			} catch (IllegalArgumentException ex) {
 				// error handling is below
 			}
 		} else {
 			track = settings.getTrack();
 			cars = settings.getCars();
+			numberLaps = settings.getNumberLaps();
 		}
 
 		String description;
 		List<Lap> lapList = null;
 
 		if (track != null && cars != null) {
-			lapList = getTrackerService().getFastestLap(track, cars);
+			lapList = getTrackerService().getFastestLap(track, cars, numberLaps);
 			StringBuilder carString = new StringBuilder();
 			boolean first = true;
 			for (Car car : cars) {
@@ -70,7 +80,9 @@ public class TrackerPage extends RaceControlPage {
 				}
 				carString.append(car.getLongname());
 			}
-			description = "Times for " + track.getName() + " with " + carString;
+
+			description = MessageFormat.format(getString("times_for"), track.getName(), carString);
+
 		} else {
 			lapList = Collections.emptyList();
 			description = "";

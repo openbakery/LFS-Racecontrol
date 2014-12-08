@@ -3,9 +3,7 @@ package org.openbakery.racecontrol.data;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -65,6 +63,7 @@ public class RaceEntry implements Serializable {
 	private String serverName;
 
 	public RaceEntry() {
+		log.debug("new race entry");
 		startTime = new Date();
 		drivers = new ArrayList<Driver>();
 		results = new ArrayList<Result>();
@@ -135,10 +134,23 @@ public class RaceEntry implements Serializable {
 	}
 
 	public void addDriver(Driver driver) {
-		if (driver.getName() == null || driver.getName().equals("")) {
-			log.error("driver name not found" + driver);
+		log.debug("ADD Driver: {}", driver);
+		Driver duplicatedDriver = null;
+		for (Driver currentDrivers : drivers) {
+			if (driver.getId() == currentDrivers.getId()) {
+				// driver already existes
+				log.debug("driver already exists");
+				return;
+			}
+			if (driver.getName().equals(currentDrivers.getName())) {
+				log.debug("driver with name already exists {}", driver);
+				duplicatedDriver = currentDrivers;
+				break;
+			}
 		}
+		drivers.remove(duplicatedDriver);
 		drivers.add(driver);
+		log.debug("Drivers: {}", drivers);
 	}
 
 	public List<Driver> getDrivers() {
@@ -171,6 +183,10 @@ public class RaceEntry implements Serializable {
 
 	public boolean isQualifying() {
 		return qualifyingMinutes > 0;
+	}
+
+	public boolean isPractice() {
+		return laps == 0;
 	}
 
 	public void addResult(Result newResult, Driver driver) {

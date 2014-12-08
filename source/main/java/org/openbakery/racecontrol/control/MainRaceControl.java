@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import net.sf.jinsim.Tiny;
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.RaceStartResponse;
-import net.sf.jinsim.response.ReorderResponse;
-import net.sf.jinsim.response.ResultResponse;
-import net.sf.jinsim.response.TinyResponse;
+import org.openbakery.jinsim.Tiny;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.RaceStartResponse;
+import org.openbakery.jinsim.response.ReorderResponse;
+import org.openbakery.jinsim.response.ResultResponse;
+import org.openbakery.jinsim.response.TinyResponse;
 
 import org.openbakery.racecontrol.DriverNotFoundException;
 import org.openbakery.racecontrol.Race;
@@ -83,47 +83,47 @@ public class MainRaceControl extends AbstractControl {
 
 		try {
 			RaceEntry newRaceEntry = persistence.store(raceEntry);
-            raceControl.getRace().setRaceEntry(newRaceEntry);
+			//raceControl.getRace().setRaceEntry(newRaceEntry);
+			raceEntry.setId(newRaceEntry.getId());
 		} catch (PersistenceException e) {
 			log.error(e.getMessage(), e);
 		}
 
 		raceControl.notifyRaceEventListener(new RaceEvent(Type.STARTED, raceControl.getRace(), null));
 		log.debug("{}", raceEntry);
+		log.debug("with drivers {}", raceEntry.getDrivers());
 	}
 
-	private Wind getWind(net.sf.jinsim.Wind wind) {
-		int windValue = net.sf.jinsim.Wind.getValue(wind);
+	private Wind getWind(org.openbakery.jinsim.Wind wind) {
+		int windValue = org.openbakery.jinsim.Wind.getValue(wind);
 		return Wind.getWind(windValue);
 	}
 
-	private Weather getWeather(net.sf.jinsim.Weather weather) {
-		int weatherValue = net.sf.jinsim.Weather.getValue(weather);
+	private Weather getWeather(org.openbakery.jinsim.Weather weather) {
+		int weatherValue = org.openbakery.jinsim.Weather.getValue(weather);
 		return Weather.getWeather(weatherValue);
 	}
 
 	private void processReorderResponse(ReorderResponse response) throws CloneNotSupportedException, PersistenceException {
 		// endRace();
 		Race race = raceControl.getRace();
+		log.debug("processReorderResponse: current race drivers {}", raceControl.getRace().getRaceDrivers());
 
 		int i = 1;
 		for (int playerId : response.getPlayerPositions()) {
 			if (playerId != 0) {
 				Driver driver = race.getDriverByPlayerId(playerId);
 				if (driver != null) {
-					// driver = driver.clone();
+					driver = driver.clone();
 					driver.setStartingPosition(i++);
+					Driver newDriver = persistence.store(driver);
+					driver.setId(newDriver.getId());
+
 					race.addRaceDriver(driver);
-					if (driver.getName() != null) {
-						Driver newDriver = persistence.store(driver);
-						driver.setId(newDriver.getId());
-					}
 				}
 			}
 		}
-		if (log.isDebugEnabled()) {
-			log.debug("race drivers: " + race.getRaceDrivers());
-		}
+		log.debug("race drivers: " + race.getRaceDrivers());
 	}
 
 	private void processResultResponse(ResultResponse response) {

@@ -58,6 +58,7 @@ public class SettingsLoader {
 			for (String field : settings.getSettingFields()) {
 
 				Type type = PropertyUtils.getPropertyType(settings, field);
+				log.debug("load field {} of type {}", field, type);
 				Object object = null;
 				if (type == List.class) {
 					Type listType = getGenericType(settings, field);
@@ -70,10 +71,17 @@ public class SettingsLoader {
 					} else {
 						object = config.getList(field);
 					}
-				} else {
+				} else if (type == int.class) {
+					object = config.getInt(field);
+				} else if (type == double.class) {
+					object = config.getDouble(field);
+				}	else {
 					object = config.get((Class) type, field);
 				}
-				PropertyUtils.setProperty(settings, field, object);
+				log.debug("object: {}", object);
+				if (object != null) {
+					PropertyUtils.setProperty(settings, field, object);
+				}
 			}
 		} catch (IllegalAccessException e) {
 			log.error("Something went wrong, this exception should not occur!", e);
@@ -148,6 +156,8 @@ public class SettingsLoader {
 		filename.append(File.separator);
 		filename.append(settings.getClass().getName());
 		filename.append(".properties");
+
+		log.debug("settings filename: {}", filename.toString());
 
 		return filename.toString();
 	}

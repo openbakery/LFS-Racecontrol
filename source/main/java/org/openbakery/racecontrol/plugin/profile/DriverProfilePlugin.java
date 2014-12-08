@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 import org.openbakery.racecontrol.persistence.PersistenceException;
 import org.openbakery.racecontrol.persistence.ProfileHelper;

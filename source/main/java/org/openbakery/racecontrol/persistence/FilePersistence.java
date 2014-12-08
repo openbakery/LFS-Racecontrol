@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.data.Flag;
@@ -153,7 +154,7 @@ public class FilePersistence implements Persistence {
 		return Collections.emptyList();
 	}
 
-	public List<? extends Object> queryNative(String query, Class<? extends Object> clazz) throws PersistenceException {
+	public List<? extends Object> queryNative(String query, Map<String, String> parameters, Class<? extends Object> clazz) throws PersistenceException {
 		return Collections.emptyList();
 	}
 
@@ -166,4 +167,8 @@ public class FilePersistence implements Persistence {
   public Transaction createTransaction() {
     return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
+
+	public int queryNativeInt(String query, Map<String, String> parameter) throws PersistenceException {
+		return 0;
+	}
 }

@@ -1,6 +1,6 @@
 package org.openbakery.racecontrol.plugin;
 
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 public abstract class AbstractAdminPlugin implements Plugin {
 

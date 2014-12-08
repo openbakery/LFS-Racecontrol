@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jinsim.response.ButtonTypeResponse;
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimListener;
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.ButtonTypeResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimListener;
+import org.openbakery.jinsim.response.InSimResponse;
 
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.gui.Button;

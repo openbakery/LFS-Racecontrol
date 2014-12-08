@@ -32,12 +32,6 @@
 				<ref bean="welcomeMessage"/>
 				<ref bean="tracker"/>
 				<ref bean="profileHelper"/>
-				<!--
-				<ref bean="penalty"/>
-				<ref bean="adminMessages"/>
-				<ref bean="board"/>
-				<ref bean="live"/>
-				-->
 			</list>
 		</property>
 	</bean>
@@ -52,17 +46,6 @@
   
 	<bean id="trackerService" class="org.openbakery.racecontrol.plugin.tracker.TrackerService">
 	</bean>
-  
-	<!--
-	<bean id="ButtonTest" class="org.openbakery.racecontrol.plugin.ButtonTest">
-	</bean>
-	-->
-
-	
-  <!--
-	<bean id="file" class="org.openbakery.racecontrol.persistence.FilePersistence">
-	</bean>
-  -->
     
 	<bean id="database" class="org.openbakery.racecontrol.persistence.DatabasePersistence">
 		<constructor-arg value="racecontrol-hsqldb"/>
@@ -111,27 +94,6 @@
 	<bean id="profileHelper" class="org.openbakery.racecontrol.plugin.profile.DriverProfilePlugin">
 	</bean>
 	
-	
-  <!--
-    
-	<bean id="adminMessages" class="org.openbakery.racecontrol.plugin.admin.messages.AdminMessages">
-		<property name="raceControl" ref="raceControl"/>
-	</bean>
-    
-	<bean id="adminMessage" class="org.openbakery.racecontrol.plugin.admin.messages.service.AdminMessagesService">
-		<property name="persistence" ref="${persistence}"/>
-	</bean>
-    
-	
-
-
-
-	<bean id="penaltyService" class="org.openbakery.racecontrol.plugin.penalty.service.PenaltyService">
-	</bean>
-	
-	<bean id="liveService" class="org.openbakery.racecontrol.plugin.live.service.LiveService">
-	</bean>
-	-->
 
 	
 </beans>

@@ -51,7 +51,7 @@ dependencies {
 	compile group: 'org.hsqldb', name: 'hsqldb', version: project.ext.hsqldbVersion
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
 	compile group: 'commons-lang', name: 'commons-lang', version: project.ext.commonsLangVersion
-	compile group: 'jinsim', name: 'jinsim', version: project.ext.jinsimVersion
+	//compile group: 'jinsim', name: 'jinsim', version: project.ext.jinsimVersion
 	testCompile group: 'org.testng', name: 'testng', version: project.ext.testngVersion
 	compile group: 'javax.servlet', name: 'servlet-api', version: project.ext.servletVersion
 }

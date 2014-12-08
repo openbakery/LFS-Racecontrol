@@ -28,7 +28,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.sf.jinsim.response.NewPlayerResponse;
+import org.openbakery.jinsim.response.NewPlayerResponse;
 
 import org.openbakery.racecontrol.persistence.FilePersistence;
 import org.slf4j.Logger;
@@ -142,7 +142,7 @@ public class Driver implements Cloneable, Serializable {
 	}
 
 	public Driver(int connectionId) {
-		this.connectionId = connectionId;
+		setConnectionId(connectionId);
 		resetRaceData();
 	}
 
@@ -217,6 +217,7 @@ public class Driver implements Cloneable, Serializable {
 	}
 
 	public void setConnectionId(int id) {
+		log.debug("--------------> set connection id to: {}", id);
 		this.connectionId = id;
 	}
 
@@ -477,14 +478,29 @@ public class Driver implements Cloneable, Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
-		if (obj == null)
+		}
+
+		if (object == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != object.getClass()) {
 			return false;
-		Driver other = (Driver) obj;
+		}
+
+		Driver other = (Driver) object;
+		if (id != other.id) {
+			return false;
+		}
+
+		if (!other.name.equals(this.name)) {
+			return false;
+		}
+
+		return false;
+		/*
 		if (connectionId != other.connectionId)
 			return false;
 		if (id != other.id)
@@ -495,6 +511,7 @@ public class Driver implements Cloneable, Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+			*/
 	}
 
 	public int getJoins() {
@@ -541,7 +558,7 @@ public class Driver implements Cloneable, Serializable {
 		setCarName(response.getCar().toString());
 		setSkinName(response.getSkinName());
 
-		net.sf.jinsim.types.Tyres insimTyres = response.getTyres();
+		org.openbakery.jinsim.types.Tyres insimTyres = response.getTyres();
 		setTyres(new Tyres(insimTyres.getRearLeft(), insimTyres.getRearRight(), insimTyres.getFrontLeft(), insimTyres.getFrontRight()));
 		setAddedMass(response.getAddedMass());
 		setIntakeRestriction(response.getIntakeRestriction());

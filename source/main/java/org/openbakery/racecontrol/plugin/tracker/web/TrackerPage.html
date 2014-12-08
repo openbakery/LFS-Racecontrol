@@ -6,27 +6,30 @@
 </head>
   <body>
     <wicket:extend>
+
+
+      <h3 wicket:id="description" id="description"></h3>
       
-      <div wicket:id="description" id="description"></div>
-      
-      <table class="tracker">
+      <table class="table">
         <tbody>
           <tr>
-            <th>Pos</th>
-            <th>Name</th>
-            <th>Car</th>
-            <th>Time</th>
-            <th>Gap previous</th>
-            <th>Gap first</th>
-            <th colspan="4">Sector Times</th>
+            <th><wicket:message key="position">Position</wicket:message></th>
+            <th><wicket:message key="name">Name</wicket:message></th>
+            <th><wicket:message key="car">Car</wicket:message></th>
+            <th><wicket:message key="time">Time</wicket:message></th>
+            <th><wicket:message key="gap_previous">Gap Previous</wicket:message></th>
+            <th><wicket:message key="gap_first">Gap First</wicket:message></th>
+            <th><wicket:message key="number">Number</wicket:message></th>
+            <th colspan="4"><wicket:message key="sector_times">Sector Times</wicket:message></th>
           </tr>
           <tr wicket:id="laps">
             <td wicket:id="position">position</td>
             <td wicket:id="name">name</td>
             <td wicket:id="car">car</td>
             <td wicket:id="time">time</td>
-            <td wicket:id="gap" class="gap">gap</td>
-            <td wicket:id="gapAll" class="gap">gapAll</td>
+            <td wicket:id="gapPrevious">time</td>
+            <td wicket:id="gapAll">time</td>
+            <td wicket:id="number" class="gap">number</td>
             <td wicket:id="splits"><span wicket:id="split"/></td>
           </tr>
         </tbody>

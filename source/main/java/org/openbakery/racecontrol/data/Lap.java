@@ -7,6 +7,7 @@ package org.openbakery.racecontrol.data;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Lap implements Comparable<Lap>, Cloneable, Serializable {
 	private int id;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "driver_id")
 	private Driver driver;
 
@@ -86,6 +87,9 @@ public class Lap implements Comparable<Lap>, Cloneable, Serializable {
 
 	@Column(name = "new_penalty")
 	private int newPenalty;
+
+	@Column(name = "created_at")
+	private Date createdAt = new Date();
 
 	@Transient
 	private LinkedList<Flag> flags = new LinkedList<Flag>();
@@ -404,6 +408,10 @@ public class Lap implements Comparable<Lap>, Cloneable, Serializable {
 
 	public void setDriver(Driver driver) {
 		this.driver = driver;
+	}
+
+	public Date getCreatedAt() {
+		return this.createdAt;
 	}
 
 	@Override

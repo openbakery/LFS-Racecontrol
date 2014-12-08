@@ -3,9 +3,9 @@ package org.openbakery.racecontrol.plugin.penalty;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.MessageResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.MessageResponse;
 
 import org.openbakery.racecontrol.RaceControl;
 import org.openbakery.racecontrol.data.Driver;
@@ -56,7 +56,7 @@ public class PenaltyPlugin implements Plugin {
 		} else if (response instanceof HiddenMessageResponse) {
 			HiddenMessageResponse hiddenMessageResponse = (HiddenMessageResponse) response;
 
-			Driver driver = raceControl.getRace().getDriver(hiddenMessageResponse.getConnectionId(), "");
+			Driver driver = raceControl.getRace().getDriver(hiddenMessageResponse.getConnectionId());
 			if (driver.isAdmin()) {
 				String message = hiddenMessageResponse.getMessage().toLowerCase();
 				logger.debug("process command: {}", message);

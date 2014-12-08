@@ -3,12 +3,13 @@ package org.openbakery.racecontrol.persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 
 public class DatabasePersistence implements Persistence {
 
@@ -70,13 +71,29 @@ public class DatabasePersistence implements Persistence {
 	public void flush() throws PersistenceException {
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<? extends Object> queryNative(String query, Class clazz) throws PersistenceException {
+	public List<? extends Object> queryNative(String queryString, Map<String, String> parameters, Class<? extends Object> clazz) throws PersistenceException {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		List<? extends Object> result = entityManager.createNativeQuery(query, clazz).getResultList();
+		Query query = entityManager.createNativeQuery(queryString, clazz);
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+		List<? extends Object> result = query.getResultList();
 		entityManager.close();
 		return result;
 	}
+
+
+	public int queryNativeInt(String queryString, Map<String, String> parameters) throws PersistenceException {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		Query query = entityManager.createNativeQuery(queryString);
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+		int result = (int)query.getSingleResult();
+		entityManager.close();
+		return result;
+	}
+
 
 	public <T> T delete(T object) throws PersistenceException {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();

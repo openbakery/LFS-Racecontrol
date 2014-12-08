@@ -1,8 +1,8 @@
 package org.openbakery.racecontrol.control;
 
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.LapTimeResponse;
-import net.sf.jinsim.response.SplitTimeResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.LapTimeResponse;
+import org.openbakery.jinsim.response.SplitTimeResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,7 +82,7 @@ public class LapControl extends AbstractControl {
 
 	}
 
-	private void processSplitTimeResponse(SplitTimeResponse response) {
+	private void processSplitTimeResponse(SplitTimeResponse response) throws PersistenceException {
 		Race race = raceControl.getRace();
 		if (race.hasRaceEntry()) {
 			Driver driver;
@@ -90,14 +90,10 @@ public class LapControl extends AbstractControl {
 				driver = race.getRaceDriver(response);
 				if (!race.hasFinished(driver)) {
 					Lap lap = driver.getCurrentLap();
-					/*
-					 * if (log.isDebugEnabled()) { log.debugexit ("time: " + response.getTime()); }
-					 */
 					lap.addSplit(response.getSplit(), response.getTime().getTime());
-					// if (log.isDebugEnabled()) {
-					// log.debug("Split: " + lap);
-					// }
 					raceControl.notifyLapEventListener(new LapEvent(driver, lap, response.getSplit()));
+					Lap newLap = persistence.store(lap);
+					lap.setId(newLap.getId());
 				}
 			} catch (DriverNotFoundException ex) {
 				log.warn(ex.getMessage());

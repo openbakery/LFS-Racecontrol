@@ -1,6 +1,6 @@
 package org.openbakery.racecontrol.plugin.rcsv;
 
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 import org.openbakery.racecontrol.plugin.Plugin;
 import org.openbakery.racecontrol.plugin.live.web.LivePage;
 import org.openbakery.racecontrol.plugin.rcsv.web.RCSVPage;

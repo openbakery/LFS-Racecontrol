@@ -1,38 +1,44 @@
 package org.openbakery.racecontrol.plugin.tracker;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jinsim.Tiny;
-import net.sf.jinsim.Track;
-import net.sf.jinsim.request.MessageRequest;
-import net.sf.jinsim.response.ButtonClickedResponse;
-import net.sf.jinsim.response.ButtonTypeResponse;
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimResponse;
-import net.sf.jinsim.response.TinyResponse;
-import net.sf.jinsim.types.InSimTime;
+import org.openbakery.jinsim.Tiny;
+import org.openbakery.jinsim.Track;
+import org.openbakery.jinsim.request.MessageRequest;
+import org.openbakery.jinsim.response.ButtonClickedResponse;
+import org.openbakery.jinsim.response.ButtonTypeResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.TinyResponse;
+import org.openbakery.jinsim.types.InSimTime;
 
 import org.openbakery.racecontrol.JInSimClient;
 import org.openbakery.racecontrol.RaceControl;
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.data.Lap;
+import org.openbakery.racecontrol.event.LapEvent;
+import org.openbakery.racecontrol.event.LapEventListener;
 import org.openbakery.racecontrol.gui.Button;
 import org.openbakery.racecontrol.gui.Panel;
 import org.openbakery.racecontrol.persistence.PersistenceException;
+import org.openbakery.racecontrol.persistence.QueryHelper;
 import org.openbakery.racecontrol.persistence.bean.Profile;
 import org.openbakery.racecontrol.plugin.Plugin;
+import org.openbakery.racecontrol.plugin.tracker.data.TrackerSettings;
 import org.openbakery.racecontrol.plugin.tracker.web.TrackerPage;
 import org.openbakery.racecontrol.plugin.tracker.web.TrackerSettingsPage;
+import org.openbakery.racecontrol.service.SettingsService;
 import org.openbakery.racecontrol.web.bean.MenuItem;
 import org.openbakery.racecontrol.web.bean.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class Tracker implements Plugin {
+public class Tracker implements Plugin, LapEventListener {
 
 	private static Logger log = LoggerFactory.getLogger(Tracker.class);
 
@@ -41,11 +47,25 @@ public class Tracker implements Plugin {
 	@Autowired
 	private TrackerService trackerService;
 
-	@Autowired
 	private RaceControl raceControl;
+
+	@Autowired
+	private QueryHelper queryHelper;
+
+	@Autowired
+	private SettingsService settingsService;
+
+	@Autowired
+	private JInSimClient insimClient;
 
 	public Tracker() {
 		trackerPanel = new HashMap<Integer, Panel>();
+	}
+
+	@Autowired
+	void setRaceControl(RaceControl raceControl) {
+		this.raceControl = raceControl;
+		raceControl.addLapEventListener(this);
 	}
 
 	public String getHelp() {
@@ -64,7 +84,7 @@ public class Tracker implements Plugin {
 
 			if (message.startsWith("tracker")) {
 				try {
-					Driver driver = raceControl.getRace().getDriver(connectionId, "");
+					Driver driver = raceControl.getRace().getDriver(connectionId);
 
 					showTracker(new Integer(connectionId), driver.isAdmin());
 				} catch (IOException e) {
@@ -99,18 +119,13 @@ public class Tracker implements Plugin {
 			for (int i = 0; i < panel.getRowCount(1); i++) {
 				Button button = panel.get(1, i);
 				if (button != null && button.getId() == response.getClickId()) {
-					MessageRequest msgRequest = new MessageRequest();
 					String message = button.getText();
 					if (response instanceof ButtonTypeResponse) {
 						message += " - " + ((ButtonTypeResponse) response).getTypeInText();
 					}
 					log.debug("send button message: {}", message);
-					msgRequest.setMessage(message);
-					try {
-						JInSimClient.getInstance().send(msgRequest);
-					} catch (IOException e) {
-						log.error(e.getMessage(), e);
-					}
+
+					sendMessage(message);
 				}
 			}
 		}
@@ -179,5 +194,46 @@ public class Tracker implements Plugin {
 	public List<MenuItem> getMenuItems() {
 		return Arrays.asList(new MenuItem("Tracker", TrackerPage.class, -1), new MenuItem("Tracker Settings", TrackerSettingsPage.class, Visibility.AUTHENTICATED, 2));
 	}
+
+	@Override
+	public void lapFinished(LapEvent event) {
+
+		TrackerSettings settings = settingsService.getTrackerSettings();
+
+		Lap lap = queryHelper.getFastestLapOnServerForDriver(settings.getCars(), settings.getTrack(), event.getDriver().getName(), settings.getNumberLaps());
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("m:ss.SSS");
+		if (event.getLap().getTime() == lap.getTime()) {
+			sendMessage("New fastest lap for " + event.getDriver().getName() + ": " + dateFormat.format(lap.getTime()));
+			// new fastest lap;
+		}
+
+
+
+		int numberLaps = queryHelper.getNumberLapsOnServerForDriver(settings.getTrack(), event.getDriver());
+		sendMessage(event.getDriver().getName() + ": " + numberLaps + " completed");
+
+
+
+	}
+
+	@Override
+	public void lapSplit(LapEvent event) {
+
+	}
+
+
+	void sendMessage(String message) {
+		MessageRequest messageRequest = new MessageRequest();
+		messageRequest.setMessage(message);
+		try {
+			insimClient.send(messageRequest);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+
+
+	}
+
 
 }

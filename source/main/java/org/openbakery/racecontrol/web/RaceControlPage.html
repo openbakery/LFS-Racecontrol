@@ -1,32 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+				"http://www.w3.org/TR/html4/strict.dtd">
 
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>RaceControl</title>
+	<link rel="Stylesheet" type="text/css" href="styles/bootstrap.css"/>
+	<link rel="Stylesheet" type="text/css" href="styles/style.css"/>
 </head>
 <body>
-   <div id="menu">
-  <ul>
-    <li wicket:id="menu">
-      <a href="#" wicket:id="link">
-        <span wicket:id="caption"></span>
-      </a>
-    </li>
-  </ul>
-  </div>
-  
-  <div id="content">
-  <div id="header">
-    <h1 wicket:id="pageTitle">RaceControlPage</h1>
-  </div>
-    <div id="main">
-      <div wicket:id="feedback"></div>
-      <wicket:child />   
-    </div> 
-  </div>
-  <div id="footer">
-  </div>
+
+	<div wicket:id="menuPanel">
+	</div>
+
+
+	<div class="container">
+		<div id="header">
+			<h1 wicket:id="pageTitle">RaceControlPage</h1>
+		</div>
+		<div id="main">
+			<div wicket:id="feedback"></div>
+			<wicket:child/>
+		</div>
+
+	</div>
+
+	<div id="footer">
+	</div>
+
+	<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

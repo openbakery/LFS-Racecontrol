@@ -42,11 +42,24 @@ public class InSimSettings implements Serializable {
 	}
 
 	public String getAdminPassword() {
-		return adminPassword;
+		if (adminPassword == null) {
+			return "";
+		}
+ 		return adminPassword;
 	}
 
 	public void setAdminPassword(String adminPassword) {
 		this.adminPassword = adminPassword;
 	}
 
+
+	@Override
+	public String toString() {
+		return "InSimSettings{" +
+						"name='" + name + '\'' +
+						", hostname='" + hostname + '\'' +
+						", port=" + port +
+						", adminPassword='" + getAdminPassword() + '\'' +
+						'}';
+	}
 }

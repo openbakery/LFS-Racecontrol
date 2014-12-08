@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.openbakery.racecontrol.bean.Settings;
 
@@ -20,6 +20,8 @@ public class TrackerSettings implements Settings {
 	public List<Car> cars;
 
 	public Track track;
+
+	private int numberLaps;
 
 	public TrackerSettings() {
 		cars = new LinkedList<Car>();
@@ -40,6 +42,14 @@ public class TrackerSettings implements Settings {
 		cars.add(car);
 	}
 
+	public int getNumberLaps() {
+		return numberLaps;
+	}
+
+	public void setNumberLaps(int numberLaps) {
+		this.numberLaps = numberLaps;
+	}
+
 	public Track getTrack() {
 		return track;
 	}
@@ -49,7 +59,16 @@ public class TrackerSettings implements Settings {
 	}
 
 	public List<String> getSettingFields() {
-		return Arrays.asList("cars", "track");
+		return Arrays.asList("cars", "track", "numberLaps");
 	}
 
+
+	@Override
+	public String toString() {
+		return "TrackerSettings{" +
+						"cars=" + cars +
+						", track=" + track +
+						", numberLaps=" + numberLaps +
+						'}';
+	}
 }

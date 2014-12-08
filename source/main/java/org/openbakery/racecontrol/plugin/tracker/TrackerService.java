@@ -1,9 +1,11 @@
 package org.openbakery.racecontrol.plugin.tracker;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.data.Lap;
@@ -13,6 +15,7 @@ import org.openbakery.racecontrol.persistence.QueryHelper;
 import org.openbakery.racecontrol.persistence.bean.Profile;
 import org.openbakery.racecontrol.plugin.tracker.data.TrackerSettings;
 import org.openbakery.racecontrol.service.SettingsService;
+import org.openbakery.racecontrol.util.LapComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,15 +48,39 @@ public class TrackerService {
 	public List<Lap> getFastestLap() throws PersistenceException {
 		TrackerSettings settings = settingsService.getTrackerSettings();
 
+		log.debug("trackerSettings {}", settings);
 		Track track = settings.getTrack();
 		List<Car> cars = settings.getCars();
+		int numberLaps = settings.getNumberLaps();
 
-		return getFastestLap(track, cars);
+		return getFastestLap(track, cars, numberLaps);
 	}
 
-	public List<Lap> getFastestLap(Track track, List<Car> cars) throws PersistenceException {
-		log.debug("getFastestLap");
+	public List<Lap> getFastestLap(Track track, List<Car> cars, int numberLaps) throws PersistenceException {
+		log.debug("getFastestLap for track: {}, cars {}, numberLaps {}", track, cars, numberLaps);
 		List<Profile> profiles = profileHelper.getSignedUpDrivers();
+
+		ArrayList<Lap> lapList = new ArrayList<>();
+
+		for (Profile profile : profiles) {
+			Lap lap = queryHelper.getFastestLapOnServerForDriver(cars, track, profile.getLfsworldName(), numberLaps);
+
+			if (lap == null) {
+				lap = new Lap();
+				Driver driver = new Driver(0);
+				driver.setName(profile.getLfsworldName());
+				lap.setDriver(driver);
+			}
+			lapList.add(lap);
+		}
+
+		Collections.sort(lapList, new LapComparator());
+		log.debug("lapList: {}", lapList);
+		return lapList;
+
+
+
+		/*
 		List<Lap> lapList = queryHelper.getFastestsLaps(cars, track, profiles);
 
 		// add drivers that has not driven a lap yet
@@ -77,6 +104,7 @@ public class TrackerService {
 
 		}
 		return lapList;
+		*/
 	}
 
 	public List<Profile> getSignedUpDrivers() throws PersistenceException {

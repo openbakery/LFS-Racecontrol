@@ -2,11 +2,12 @@ package org.openbakery.racecontrol.persistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.openbakery.racecontrol.data.Driver;
 import org.openbakery.racecontrol.data.Lap;
@@ -55,7 +56,8 @@ public class QueryHelper {
 		}
 
 		try {
-			List<Lap> laps = (List<Lap>) persistence.queryNative(query.toString(), Lap.class);
+			HashMap<String, String> parameters = new HashMap<>();
+			List<Lap> laps = (List<Lap>) persistence.queryNative(query.toString(), parameters, Lap.class);
 			if (!laps.isEmpty()) {
 				return (Lap) laps.get(0);
 			}
@@ -67,11 +69,6 @@ public class QueryHelper {
 
 	public Lap getFastestLapOnServerForDriver(Track track, Driver driver) {
 
-		/*
-		 * SELECT lap. FROM racecontrol_lap as lap, racecontrol_driver AS driver WHERE driver.id = lap.driver_id AND driver.name = 'Brilwing' AND driver.car_name = '' AND lap.time = ( SELECT min(lap.time)
-		 * from racecontrol_driver AS driver, racecontrol_lap AS lap, racecontrol_race_entry AS entry WHERE driver.id = lap.driver_id AND driver.race_entry_id = entry.id AND entry.track = 'KY2R' AND
-		 * driver.name = 'Brilwing' AND driver.car_name = '' ORDER BY entry.start_time )
-		 */
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT lap.* FROM racecontrol_lap as lap, racecontrol_driver AS driver");
 		query.append(" WHERE driver.id = lap.driver_id");
@@ -100,8 +97,11 @@ public class QueryHelper {
 			log.debug("Query: " + query);
 		}
 
+
 		try {
-			List<Lap> laps = (List<Lap>) persistence.queryNative(query.toString(), Lap.class);
+			HashMap<String, String> parameters = new HashMap<>();
+
+			List<Lap> laps = (List<Lap>) persistence.queryNative(query.toString(), parameters, Lap.class);
 			if (!laps.isEmpty()) {
 				return (Lap) laps.get(0);
 			}
@@ -138,10 +138,6 @@ public class QueryHelper {
 		if (log.isDebugEnabled()) {
 			log.debug("Query: " + query);
 		}
-		/*
-		 * try { List<Lap> laps = (List<Lap>)persistence.queryNative(query.toString(), Lap.class); if (!laps.isEmpty()) { return (Lap)laps.get(0); } } catch (PersistenceException e) { log.error("Cannot
-		 * perform query!", e); }
-		 */
 		return null;
 	}
 
@@ -151,21 +147,6 @@ public class QueryHelper {
 		}
 
 		StringBuilder query = new StringBuilder();
-
-		// SELECT driver.*, lap.* FROM racecontrol_lap lap
-		// INNER JOIN racecontrol_driver AS driver ON lap.driver_id = driver.id
-		// INNER JOIN (
-		// SELECT driver_inner.name as name, min(lap_inner.time) as time
-		// FROM racecontrol_lap as lap_inner
-		// INNER JOIN racecontrol_driver as driver_inner ON lap_inner.driver_id = driver_inner.id
-		// INNER JOIN racecontrol_race_entry as race_entry_inner ON race_entry_inner.id = driver_inner.race_entry_id
-		// WHERE driver_inner.car_name = 'BF1'
-		// AND race_entry_inner.track = 'KY2R'
-		// GROUP BY driver_inner.name) as fastest_lap ON lap.time = fastest_lap.time AND driver.name = fastest_lap.name
-		// INNER JOIN racecontrol_race_entry as entry ON entry.id = driver.race_entry_id
-		// WHERE entry.track = 'KY2R' AND driver.car_name IN ('BF1')
-		// AND lower(driver.name) IN ('brilwing', 'mensafest', 'chirpydriver', 'schrauberherz', 'bberger', 'severin kapplmüller', 'isehwurscht', 'gpmp', 'nob2', 'gunger40', 'climbs', 'theblacklion',
-		// 'bbman', 'jatino', 'masterlooser15', 're-offender', 'naviracer', 'huhu_', 'masahara', 'paracelsus', 'chrizu')
 
 		query.append("SELECT driver.*, lap.* ");
 		query.append("FROM racecontrol_lap lap ");
@@ -249,4 +230,105 @@ public class QueryHelper {
 		Collections.sort(lapList, new LapComparator());
 		return lapList;
 	}
+
+
+	public int getNumberLapsOnServerForDriver(Track track, Driver driver) {
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT count(lap.id) FROM racecontrol_lap as lap, racecontrol_driver AS driver, racecontrol_race_entry AS entry");
+		query.append(" WHERE driver.id = lap.driver_id");
+		query.append(" AND driver.race_entry_id = entry.id");
+		query.append(" AND driver.name = :driverName");
+		query.append(" AND driver.car_name = :carName");
+		query.append(" AND entry.track = :trackName");
+
+		if (log.isDebugEnabled()) {
+			log.debug("Query: " + query);
+		}
+
+		HashMap<String, String> parameters = new HashMap<>();
+		parameters.put("driverName", driver.getName());
+		parameters.put("carName", driver.getCarName());
+		parameters.put("trackName", track.getShortname());
+
+
+		try {
+			return persistence.queryNativeInt(query.toString(), parameters);
+		} catch (PersistenceException e) {
+			log.error("Cannot perform query!", e);
+		}
+		return 0;
+	}
+
+
+	public Lap getFastestLapOnServerForDriver(List<Car> cars, Track track, String driverName, int limit) {
+
+		StringBuilder carList = new StringBuilder();
+		for (Car car : cars) {
+			if (carList.length() > 0) {
+				carList.append(", ");
+			}
+			carList.append("'");
+			carList.append(car.toString());
+			carList.append("'");
+		}
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT lap.* FROM racecontrol_lap as lap, racecontrol_driver AS driver, racecontrol_race_entry AS entry");
+		query.append(" WHERE driver.id = lap.driver_id");
+		query.append(" AND driver.race_entry_id = entry.id");
+		query.append(" AND driver.name = :driverName");
+		query.append(" AND entry.track = :trackName");
+		query.append(" AND lap.split1 < 3600000");
+		query.append(" AND driver.car_name IN (");
+		query.append(carList.toString());
+		query.append(")");
+		query.append(" ORDER BY lap.created_at");
+		if (limit > 0) {
+			query.append(" LIMIT " + limit);
+		}
+
+
+		if (log.isDebugEnabled()) {
+			log.debug("Query: " + query);
+		}
+
+		HashMap<String, String> parameters = new HashMap<>();
+		parameters.put("driverName", driverName);
+		parameters.put("trackName", track.getShortname());
+
+
+		Lap fastest = null;
+		try {
+			List<Lap>laps = (List<Lap>)persistence.queryNative(query.toString(), parameters, Lap.class);
+			int i = 1;
+			for (Lap lap : laps) {
+				if (fastest == null) {
+					fastest = lap;
+					fastest.setNumber(i);
+				}
+				if (fastest.getTime() == 0 && lap.getTime() > 0) {
+					fastest = lap;
+					fastest.setNumber(i);
+				} else if (lap.getTime() > 0 && lap.getTime() < fastest.getTime()) {
+					fastest = lap;
+					fastest.setNumber(i);
+				}
+				i++;
+			}
+			if (fastest != null) {
+				if (laps == null) {
+					fastest.setPosition(0);
+				} else {
+					fastest.setPosition(laps.size());
+				}
+			}
+
+		} catch (PersistenceException e) {
+			log.error("Cannot perform query!", e);
+		}
+		return fastest;
+
+	}
+
 }

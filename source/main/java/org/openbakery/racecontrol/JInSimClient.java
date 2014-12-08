@@ -2,9 +2,9 @@ package org.openbakery.racecontrol;
 
 import java.io.IOException;
 
-import net.sf.jinsim.QueueClient;
-import net.sf.jinsim.TCPChannel;
-import net.sf.jinsim.request.InitRequest;
+import org.openbakery.jinsim.QueueClient;
+import org.openbakery.jinsim.TCPChannel;
+import org.openbakery.jinsim.request.InitRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

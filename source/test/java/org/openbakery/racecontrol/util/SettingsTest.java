@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.openbakery.racecontrol.plugin.tracker.data.TrackerSettings;
 import org.openbakery.racecontrol.service.SettingsLoader;

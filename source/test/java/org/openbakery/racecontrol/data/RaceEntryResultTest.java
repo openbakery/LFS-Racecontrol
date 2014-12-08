@@ -68,7 +68,7 @@ public class RaceEntryResultTest {
 	}
 	
 	private Driver createDriver(int id) {
-		Driver driver = new Driver();
+		Driver driver = new Driver(0);
 		driver.setConnectionId(0);
 		driver.setPlayerId(id);
 		driver.setName(Integer.toString(id));

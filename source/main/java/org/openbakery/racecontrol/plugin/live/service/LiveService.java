@@ -16,7 +16,7 @@ public class LiveService {
 	private RaceService raceService;
 
 	public List<LiveTiming> getLiveTiming() {
-		List<Driver> driverList = raceService.getRaceControl().getRace().getDrivers();
+		List<Driver> driverList = raceService.getRaceControl().getRace().getRaceEntry().getDrivers();
 		ArrayList<LiveTiming> result = new ArrayList<LiveTiming>(driverList.size());
 
 		for (Driver driver : driverList) {

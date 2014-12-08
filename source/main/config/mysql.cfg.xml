@@ -5,8 +5,8 @@
     <property name="hibernate.dialect">org.openbakery.racecontrol.persistence.MySqlDialectTextFix</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/lfs</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.password">liveforspeed</property>
-    <property name="hibernate.connection.username">lfs</property>
+    <property name="hibernate.connection.password">password</property>
+    <property name="hibernate.connection.username">admin</property>
     <property name="hibernate.jdbc.use_streams_for_binary">true</property>
     <property name="hibernate.jdbc.batch_size">0</property>
     <property name="hibernate.max_fetch_depth">3</property>

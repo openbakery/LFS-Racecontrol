@@ -27,7 +27,10 @@
 	<logger name="org.apache.wicket">
 		<level value="info" />
 	</logger>
-	
+
+	<logger name="org.hibernate">
+		<level value="info" />
+	</logger>
 	
 	<root>
 		<level value="info"/>

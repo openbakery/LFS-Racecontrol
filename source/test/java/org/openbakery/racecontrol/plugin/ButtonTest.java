@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jinsim.response.HiddenMessageResponse;
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.HiddenMessageResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 import org.openbakery.racecontrol.gui.Button;
 import org.openbakery.racecontrol.gui.Panel;

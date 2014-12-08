@@ -3,8 +3,8 @@ package org.openbakery.racecontrol.plugin.tracker.web;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import net.sf.jinsim.Car;
-import net.sf.jinsim.Track;
+import org.openbakery.jinsim.Car;
+import org.openbakery.jinsim.Track;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
@@ -32,6 +32,7 @@ public class TrackerSettingsPage extends RaceControlPage {
 		form.add(new CheckBoxMultipleChoice("cars", new PropertyModel(trackerSettings, "cars"), new ArrayList<Car>(EnumSet.allOf(Car.class))));
 
 		form.add(new ListChoice("track", new PropertyModel(trackerSettings, "track"), new ArrayList<Track>(EnumSet.allOf(Track.class))));
+		form.add(new TextField("numberLaps", new PropertyModel(trackerSettings, "numberLaps")));
 
 		form.add(new RedirectLink("cancel", TrackerPage.class));
 		form.add(new SaveButton(getSession()));

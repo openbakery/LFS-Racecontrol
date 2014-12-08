@@ -3,7 +3,7 @@ package org.openbakery.racecontrol.plugin.live;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.jinsim.response.InSimResponse;
+import org.openbakery.jinsim.response.InSimResponse;
 
 import org.openbakery.racecontrol.plugin.Plugin;
 import org.openbakery.racecontrol.plugin.live.web.LivePage;
