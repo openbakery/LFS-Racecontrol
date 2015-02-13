@@ -144,13 +144,8 @@ public class Race {
 
 	public Driver getDriver(int connectionId) {
 		if (raceEntry != null) {
-			for (Driver driver : raceEntry.getDrivers()) {
-				if (driver.getConnectionId() == connectionId) {
-					return driver;
-				}
-			}
+			return raceEntry.getDriverWithConnectionId(connectionId);
 		}
-
 		return null;
 	}
 

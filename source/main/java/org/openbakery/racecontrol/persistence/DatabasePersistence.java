@@ -89,7 +89,12 @@ public class DatabasePersistence implements Persistence {
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
 		}
-		int result = (int)query.getSingleResult();
+		int result = 0;
+		Object resultObject = query.getSingleResult();
+		if (resultObject instanceof Number) {
+			result = ((Number)resultObject).intValue();
+		}
+
 		entityManager.close();
 		return result;
 	}

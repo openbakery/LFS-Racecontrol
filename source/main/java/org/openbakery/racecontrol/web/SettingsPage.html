@@ -9,27 +9,42 @@
   <wicket:extend>
     <span wicket:id="serverStatus"></span>
   
-    <form wicket:id="form">
+    <form wicket:id="form" class="form-horizontal">
       <div>
-        <span class="label">Name</span>
-        <input wicket:id="name" type="text"/>
+        <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">Name</label>
+          <div class="col-sm-10">
+            <input wicket:id="name" id="name" type="text"/>
+          </div>
+        </div>
       </div>
-      <div>
-        <span class="label">Hostname</span>
-        <input wicket:id="hostname" type="text"/>
+      <div class="form-group">
+        <label for="hostname" class="col-sm-2 control-label">Hostname</label>
+        <div class="col-sm-10">
+          <input wicket:id="hostname" id="hostname" type="text"/>
+        </div>
       </div>
-      <div>
-        <span class="label">Port</span>
-        <input wicket:id="port" type="text"/>
+      <div class="form-group">
+        <label for="port" class="col-sm-2 control-label">Port</label>
+        <div class="col-sm-10">
+          <input wicket:id="port" id="port" type="text"/>
+        </div>
       </div>
-      <div>
-        <span class="label">Admin Password</span>
-        <input wicket:id="adminPassword" type="password"/>
+      <div class="form-group">
+        <label for="adminpassword" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-10">
+          <input wicket:id="adminPassword" id="adminpassword" type="password"/>
+        </div>
       </div>
-      <div>
+      <div class="form-group">
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="button" wicket:id="stop" value="Stop"  class="btn btn-default">Disconnect</button>
+            <button type="submit" wicket:id="start" value="Start"  class="btn btn-default">Connect</button>
+          </div>
+        </div>
+
         <span class="label">&nbsp;</span>
-        <input type="button" wicket:id="stop" value="Stop" />   
-        <input type="submit" wicket:id="start" value="Start" />
       </div>
     </form>
   </wicket:extend>

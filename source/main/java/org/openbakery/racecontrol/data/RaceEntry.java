@@ -234,4 +234,22 @@ public class RaceEntry implements Serializable {
 		this.hours = hours;
 	}
 
+
+	public Driver getDriverWithConnectionId(int connectionId) {
+		for (Driver driver : getDrivers()) {
+			if (driver.getConnectionId() == connectionId) {
+				return driver;
+			}
+		}
+		return null;
+	}
+
+	public Driver getDriverWithName(String name) {
+		for (Driver driver : getDrivers()) {
+			if (driver.getName().equals(name)) {
+				return driver;
+			}
+		}
+		return null;
+	}
 }

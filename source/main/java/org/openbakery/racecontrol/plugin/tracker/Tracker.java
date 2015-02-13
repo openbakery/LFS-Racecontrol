@@ -102,7 +102,11 @@ public class Tracker implements Plugin, LapEventListener {
 				}
 				trackerPanel.clear();
 			}
-		}
+		} /*else if (response instanceof PitLaneResponse) {
+
+
+
+		}*/
 	}
 
 	private void processClickResponse(ButtonClickedResponse response) {
@@ -208,12 +212,8 @@ public class Tracker implements Plugin, LapEventListener {
 			// new fastest lap;
 		}
 
-
-
 		int numberLaps = queryHelper.getNumberLapsOnServerForDriver(settings.getTrack(), event.getDriver());
-		sendMessage(event.getDriver().getName() + ": " + numberLaps + " completed");
-
-
+		sendMessage(event.getDriver().getName() + ": " + numberLaps + " of " + settings.getNumberLaps() + " completed");
 
 	}
 

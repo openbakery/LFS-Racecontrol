@@ -5,23 +5,29 @@
   </head>
   
   <body>
-   
-    <wicket:extend>
-      <form role="form" wicket:id="form">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input wicket:id="username" type="text"/>
-        </div>
-        <div>
-          <label for="password">Password</label>
-          <input wicket:id="password" type="password"/>
-        </div>
-        <div>
-          <button wicket:id="cancel" type="submit" class="btn btn-default">Cancel</button>
-          <button wicket:id="login" type="submit" class="btn btn-default">Login</button>
 
-        </div>
-      </form>
+    <wicket:extend>
+      <div class="panel">
+        <form wicket:id="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="username" class="col-sm-2 control-label">Username</label>
+            <div class="col-sm-10">
+              <input wicket:id="username" id="username" placeholder="Username" type="text"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password" class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+              <input wicket:id="password" id="password" placeholder="Password" type="password"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button wicket:id="login" type="submit" class="btn btn-default">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </wicket:extend>
   </body>
 </html>

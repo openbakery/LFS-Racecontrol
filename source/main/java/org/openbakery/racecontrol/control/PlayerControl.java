@@ -11,6 +11,7 @@ import org.openbakery.racecontrol.DriverNotFoundException;
 import org.openbakery.racecontrol.Race;
 import org.openbakery.racecontrol.RaceControl;
 import org.openbakery.racecontrol.data.Driver;
+import org.openbakery.racecontrol.data.RaceEntry;
 import org.openbakery.racecontrol.event.RaceEvent;
 import org.openbakery.racecontrol.event.RaceEvent.Type;
 import org.openbakery.racecontrol.persistence.Persistence;
@@ -101,14 +102,19 @@ public class PlayerControl extends AbstractControl {
 			log.debug("driver name is missing, therefor racecontrol connected during a race: " + driver);
 			return;
 		}
-		Driver newDriver = persistence.store(driver);
+		race.addRaceDriver(driver);
+		//Driver newDriver = persistence.store(driver);
+		// race entry should be stored, so that the driver id is set properly
+		RaceEntry raceEntry = persistence.store(race.getRaceEntry());
+		Driver newDriver = raceEntry.getDriverWithName(driver.getName());
 		driver.setId(newDriver.getId());
 		driver.newLap();
-		race.addRaceDriver(driver);
 
 		raceControl.notifyRaceEventListener(new RaceEvent(Type.NEW_DRIVER, race, driver));
 		log.debug("new player: {}", driver);
 	}
+
+
 
 	protected void removeOldDriver(int connectionId) {
 		if (log.isDebugEnabled()) {
