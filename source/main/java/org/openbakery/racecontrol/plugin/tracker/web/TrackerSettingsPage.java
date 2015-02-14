@@ -14,12 +14,13 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.openbakery.racecontrol.plugin.tracker.data.TrackerSettings;
 import org.openbakery.racecontrol.web.RaceControlPage;
+import org.openbakery.racecontrol.web.RaceControlProtectedPage;
 import org.openbakery.racecontrol.web.bean.Visibility;
 import org.openbakery.racecontrol.web.page.common.RedirectLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TrackerSettingsPage extends RaceControlPage {
+public class TrackerSettingsPage extends RaceControlProtectedPage {
 
 	private Logger log = LoggerFactory.getLogger(TrackerSettingsPage.class);
 

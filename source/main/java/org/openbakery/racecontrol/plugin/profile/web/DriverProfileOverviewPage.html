@@ -9,12 +9,13 @@
   <body>
     <wicket:extend>
       <form wicket:id="form">
-        <table class="adminMessages">
+        <table class="table">
           <tbody>
             <tr>
-              <th>Firstname</th>
-              <th>Lastname</th>
-              <th>LFSWorld Name</th>
+              <th><wicket:message key="firstname">Firstname</wicket:message></th>
+              <th><wicket:message key="lastname">Lastname</wicket:message></th>
+              <th><wicket:message key="lfsworldname">LFSWorld Name</wicket:message></th>
+              <th><wicket:message key="signedup">Signed Up</wicket:message></th>
               <th>&nbsp</th>
             </tr>
             <tr wicket:id="adminMessages">
@@ -23,15 +24,15 @@
               <td wicket:id="lfsworldName">lfsworldName</td>
               <td wicket:id="signedUp">signedUp</td>
               <td>
-                <a class="button" href="#" wicket:id="edit">Edit</a>
-                <a class="button" href="#" wicket:id="delete">Delete</a>
+                <button wicket:id="edit" type="submit" class="btn btn-default btn-xs"><wicket:message key="edit">Edit</wicket:message></button>
+                <button wicket:id="delete" type="submit" class="btn btn-danger btn-xs"><wicket:message key="delete">Delete</wicket:message></button>
               </td>
             </tr>
           </tbody>
         </table>
         
         <div>
-          <input type="submit" wicket:id="add" value="add" />
+          <button wicket:id="add" type="submit" class="btn btn-default"><wicket:message key="add">Add</wicket:message></button>
         </div>
       </form>
     </wicket:extend>

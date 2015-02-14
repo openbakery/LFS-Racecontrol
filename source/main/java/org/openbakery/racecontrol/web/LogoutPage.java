@@ -1,5 +1,6 @@
 package org.openbakery.racecontrol.web;
 
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.openbakery.racecontrol.web.bean.Visibility;
 
@@ -7,7 +8,7 @@ public class LogoutPage extends RaceControlPage {
 
 	public LogoutPage(PageParameters parameters) {
 		super(parameters);
-		getSession().getUser().setLoggedIn(false);
+		AuthenticatedWebSession.get().invalidate();
 		setResponsePage(LoginPage.class);
 	}
 

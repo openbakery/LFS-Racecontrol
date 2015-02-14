@@ -6,14 +6,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.openbakery.jinsim.Car;
 import org.openbakery.jinsim.Tiny;
 import org.openbakery.jinsim.Track;
 import org.openbakery.jinsim.request.MessageRequest;
-import org.openbakery.jinsim.response.ButtonClickedResponse;
-import org.openbakery.jinsim.response.ButtonTypeResponse;
-import org.openbakery.jinsim.response.HiddenMessageResponse;
-import org.openbakery.jinsim.response.InSimResponse;
-import org.openbakery.jinsim.response.TinyResponse;
+import org.openbakery.jinsim.response.*;
 import org.openbakery.jinsim.types.InSimTime;
 
 import org.openbakery.racecontrol.JInSimClient;
@@ -43,6 +40,8 @@ public class Tracker implements Plugin, LapEventListener {
 	private static Logger log = LoggerFactory.getLogger(Tracker.class);
 
 	private HashMap<Integer, Panel> trackerPanel;
+
+	SimpleDateFormat dateFormat = new SimpleDateFormat("m:ss.SSS");
 
 	@Autowired
 	private TrackerService trackerService;
@@ -76,6 +75,75 @@ public class Tracker implements Plugin, LapEventListener {
 		return "Tracker";
 	}
 
+
+	public void packetReceived(InSimResponse response) {
+
+		if (response instanceof NewPlayerResponse) {
+			NewPlayerResponse newPlayerResponse = (NewPlayerResponse)response;
+			try {
+				showPanel(newPlayerResponse.getConnectionId());
+			} catch (IOException e) {
+				log.error(e.getMessage(), e);
+			}
+		} else if (response instanceof ConnectionLeaveResponse) {
+			ConnectionLeaveResponse connectionLeaveResponse = (ConnectionLeaveResponse)response;
+			hidePanel(connectionLeaveResponse.getConnectionId());
+		} else if (response instanceof PitLaneResponse) {
+			Driver driver = raceControl.getRace().getDriverByPlayerId(((PitLaneResponse) response).getPlayerId());
+			updatePanel(driver.getConnectionId());
+		}
+
+	}
+
+	private void hidePanel(Integer connectionId) {
+		Panel panel = trackerPanel.get(connectionId);
+		if (panel != null) {
+			trackerPanel.remove(connectionId);
+			panel.destroy();
+		}
+	}
+
+	private void showPanel(Integer connectionId) throws IOException {
+		// destroy the panel if one exists for this connectionID
+		hidePanel(connectionId);
+
+		Panel panel = new Panel(135, 4);
+		panel.setColumns(25);
+		panel.add(new Button(connectionId, ""), 0);
+		panel.add(new Button(connectionId, ""), 0);
+
+		updatePanel(connectionId);
+
+		panel.setVisible(true);
+		trackerPanel.put(connectionId, panel);
+		}
+
+	public void updatePanel(Integer connectionId) {
+
+		Panel panel = trackerPanel.get(connectionId);
+		if (panel == null) {
+			log.debug("Panel not found for connectionId {}, so do nothing", connectionId);
+			return;
+		}
+
+		Driver driver = raceControl.getRace().getDriver(connectionId);
+		if (driver == null) {
+			log.debug("Driver not found for connectionId {}, so do nothing", connectionId);
+			return;
+		}
+
+		Lap lap = getFastestLapForDriver(driver);
+
+		Button numberLapsButton = panel.get(0, 0);
+		//int numberLaps = getNumberLapsOnServerForDriver(driver);
+		numberLapsButton.setText("Laps left: " +  (settingsService.getTrackerSettings().getNumberLaps() - lap.getPosition()));
+
+		Button lapTimeButton = panel.get(0, 1);
+		lapTimeButton.setText("Fastest Lap: " + InSimTime.toString(lap.getTime()) + " (" + lap.getNumber() + ")");
+
+	}
+
+/*
 	public void packetReceived(InSimResponse response) {
 		if (response instanceof HiddenMessageResponse) {
 			HiddenMessageResponse hiddenMessageResponse = (HiddenMessageResponse) response;
@@ -102,11 +170,7 @@ public class Tracker implements Plugin, LapEventListener {
 				}
 				trackerPanel.clear();
 			}
-		} /*else if (response instanceof PitLaneResponse) {
-
-
-
-		}*/
+		}
 	}
 
 	private void processClickResponse(ButtonClickedResponse response) {
@@ -195,6 +259,8 @@ public class Tracker implements Plugin, LapEventListener {
 		trackerPanel.put(connectionId, panel);
 	}
 
+	*/
+
 	public List<MenuItem> getMenuItems() {
 		return Arrays.asList(new MenuItem("Tracker", TrackerPage.class, -1), new MenuItem("Tracker Settings", TrackerSettingsPage.class, Visibility.AUTHENTICATED, 2));
 	}
@@ -202,27 +268,63 @@ public class Tracker implements Plugin, LapEventListener {
 	@Override
 	public void lapFinished(LapEvent event) {
 
+		updatePanel(event.getDriver().getConnectionId());
+
+		/*
 		TrackerSettings settings = settingsService.getTrackerSettings();
 
-		Lap lap = queryHelper.getFastestLapOnServerForDriver(settings.getCars(), settings.getTrack(), event.getDriver().getName(), settings.getNumberLaps());
+		Lap lap = getFastestLapForDriver(event.getDriver());
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("m:ss.SSS");
+
 		if (event.getLap().getTime() == lap.getTime()) {
 			sendMessage("New fastest lap for " + event.getDriver().getName() + ": " + dateFormat.format(lap.getTime()));
 			// new fastest lap;
 		}
 
-		int numberLaps = queryHelper.getNumberLapsOnServerForDriver(settings.getTrack(), event.getDriver());
+		int numberLaps = getNumberLapsOnServerForDriver(event.getDriver());
 		sendMessage(event.getDriver().getName() + ": " + numberLaps + " of " + settings.getNumberLaps() + " completed");
+*/
+	}
 
+	private Lap getFastestLapForDriver(Driver driver) {
+
+		TrackerSettings settings = settingsService.getTrackerSettings();
+		try {
+			List<Lap>lapList = trackerService.getFastestLap(settings.getTrack(), settings.getCars(), settings.getNumberLaps());
+
+			log.debug("lapList {}", lapList);
+
+
+
+			log.debug("==== DRIVER  {}", driver);
+			for (Lap lap : lapList) {
+				log.debug("lap.driver {}", lap.getDriver());
+
+				if (lap.getDriver().getName().equals(driver.getName())) {
+					return lap;
+				}
+			}
+
+		} catch (PersistenceException e) {
+			log.error(e.getMessage(), e);
+		}
+		return new Lap();
+
+
+		//return queryHelper.getFastestLapOnServerForDriver(settings.getCars(), settings.getTrack(), driver.getName(), settings.getNumberLaps());
+	}
+
+	private int getNumberLapsOnServerForDriver(Driver driver) {
+		TrackerSettings settings = settingsService.getTrackerSettings();
+		return queryHelper.getNumberLapsOnServerForDriver(settings.getTrack(), driver);
 	}
 
 	@Override
 	public void lapSplit(LapEvent event) {
-
+		updatePanel(event.getDriver().getConnectionId());
 	}
 
-
+/*
 	void sendMessage(String message) {
 		MessageRequest messageRequest = new MessageRequest();
 		messageRequest.setMessage(message);
@@ -234,6 +336,6 @@ public class Tracker implements Plugin, LapEventListener {
 
 
 	}
-
+*/
 
 }

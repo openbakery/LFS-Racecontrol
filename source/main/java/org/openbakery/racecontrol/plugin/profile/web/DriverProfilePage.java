@@ -8,11 +8,12 @@ import org.openbakery.racecontrol.plugin.profile.service.DriverProfileService;
 import org.openbakery.racecontrol.service.ServiceLocateException;
 import org.openbakery.racecontrol.service.ServiceLocator;
 import org.openbakery.racecontrol.web.RaceControlPage;
+import org.openbakery.racecontrol.web.RaceControlProtectedPage;
 import org.openbakery.racecontrol.web.bean.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DriverProfilePage extends RaceControlPage {
+public abstract class DriverProfilePage extends RaceControlProtectedPage {
 
 	private static Logger log = LoggerFactory.getLogger(DriverProfilePage.class);
 

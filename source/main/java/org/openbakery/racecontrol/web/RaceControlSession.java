@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.protocol.http.WebSession;
 import org.openbakery.racecontrol.bean.User;
 import org.openbakery.racecontrol.plugin.Plugin;
 import org.openbakery.racecontrol.service.ServiceLocateException;
 import org.openbakery.racecontrol.service.ServiceLocator;
+import org.openbakery.racecontrol.service.exception.LoginFailedException;
 import org.openbakery.racecontrol.web.bean.MenuItem;
 import org.openbakery.racecontrol.web.bean.Visibility;
 
-public class RaceControlSession extends WebSession {
+public class RaceControlSession extends AuthenticatedWebSession {
 
 	/**
 	 * 
@@ -29,6 +32,21 @@ public class RaceControlSession extends WebSession {
 		user = new User();
 	}
 
+	@Override
+	public Roles getRoles() {
+		return null;
+	}
+
+	@Override
+	public boolean authenticate(String username, String password) {
+		try {
+			getServiceLocator().getLoginService().login(username, password);
+			return true;
+		} catch (LoginFailedException e) {
+			return false;
+		}
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -37,9 +55,6 @@ public class RaceControlSession extends WebSession {
 		this.user = user;
 	}
 
-	public boolean isLoggedIn() {
-		return user.isLoggedIn();
-	}
 
 	/*
 	 * public Object getBean(String name) {
@@ -48,7 +63,6 @@ public class RaceControlSession extends WebSession {
 	 * 
 	 * return application.getContext().getBean(name); }
 	 */
-
 	public ServiceLocator getServiceLocator() {
 		RaceControlWebApplication application = (RaceControlWebApplication) getApplication();
 		return (ServiceLocator) application.getContext().getBean("serviceLocator");

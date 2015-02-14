@@ -42,7 +42,7 @@ public class TeamProfileOverviewPage extends DriverProfilePage {
 
 	@Override
 	public String getPageTitle() {
-		return "Team Profile Overview Page";
+		return "Team Profile";
 	}
 
 }

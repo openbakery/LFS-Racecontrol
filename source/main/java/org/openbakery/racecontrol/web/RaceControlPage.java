@@ -1,6 +1,8 @@
 package org.openbakery.racecontrol.web;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -22,15 +24,15 @@ public abstract class RaceControlPage extends WebPage {
   }
 
 	public RaceControlPage(PageParameters parameters) {
+
     add(new Label("pageTitle", getPageTitle()));
     add(new FeedbackPanel("feedback"));
 
 		MenuPanel menu = new MenuPanel(getClass());
 		add(menu);
 
-		menu.setVisible(getSession().isLoggedIn());
+		menu.setVisible(getSession().isSignedIn());
 	}
-
 
 	@Override
 	public RaceControlSession getSession() {

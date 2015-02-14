@@ -42,7 +42,7 @@ public class DriverProfileOverviewPage extends DriverProfilePage {
 
 	@Override
 	public String getPageTitle() {
-		return "Driver Profile Messages Overview Page";
+		return "Driver Profiles";
 	}
 
 }

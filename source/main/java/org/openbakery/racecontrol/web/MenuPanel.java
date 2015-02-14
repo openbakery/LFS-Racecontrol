@@ -21,7 +21,7 @@ public class MenuPanel extends Panel {
 		RepeatingView menu = new RepeatingView("menuItems");
 
 		for (MenuItem item : getSession().getMenuItems()) {
-			if (!getSession().isLoggedIn() && item.getVisibility() == Visibility.AUTHENTICATED) {
+			if (!getSession().isSignedIn() && item.getVisibility() == Visibility.AUTHENTICATED) {
 				continue;
 			}
 

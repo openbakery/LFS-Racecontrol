@@ -28,7 +28,10 @@ public class DriverProfilePlugin implements Plugin, ProfileHelper {
 	}
 
 	public List<MenuItem> getMenuItems() {
-		return Arrays.asList(new MenuItem("Driver", DriverProfileOverviewPage.class, Visibility.AUTHENTICATED, 0), new MenuItem("Team", TeamProfileOverviewPage.class, Visibility.AUTHENTICATED, 1));
+		return Arrays.asList(
+						new MenuItem("Driver", DriverProfileOverviewPage.class, Visibility.AUTHENTICATED, 0)
+		//				new MenuItem("Team", TeamProfileOverviewPage.class, Visibility.AUTHENTICATED, 1)
+		);
 	}
 
 	public String getName() {

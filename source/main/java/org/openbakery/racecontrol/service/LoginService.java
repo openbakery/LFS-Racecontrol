@@ -17,9 +17,8 @@ public class LoginService {
 		this.password = password;
 	}
 
-	public void login(User user) throws LoginFailedException {
-		if (user.getName().equals(username) && user.getPassword().equals(password)) {
-			user.setLoggedIn(true);
+	public void login(String username, String password) throws LoginFailedException {
+		if (this.username.equals(username) && this.password.equals(password)) {
 			return;
 		}
 		throw new LoginFailedException("Unknown username/password");

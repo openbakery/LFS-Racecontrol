@@ -45,6 +45,7 @@ dependencies {
 	compile group: 'org.apache.wicket', name: 'wicket-core', version: project.ext.wicketVersion
 	compile group: 'org.apache.wicket', name: 'wicket-spring', version: project.ext.wicketVersion
 	compile group: 'org.apache.wicket', name: 'wicket-datetime', version: project.ext.wicketVersion
+	compile group: 'org.apache.wicket', name: 'wicket-auth-roles', version: project.ext.wicketVersion
 	//compile group: 'org.hibernate', name: 'hibernate-annotations', version: project.ext.hibernateVersion
 	compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: project.ext.hibernateVersion
 	compile group: 'org.hibernate', name: 'hibernate-c3p0', version: project.ext.hibernateVersion
