@@ -318,9 +318,9 @@ public class QueryHelper {
 			}
 			if (fastest != null) {
 				if (laps == null) {
-					fastest.setPosition(0);
+					fastest.setAttempt(0);
 				} else {
-					fastest.setPosition(laps.size());
+					fastest.setAttempt(laps.size());
 				}
 			}
 

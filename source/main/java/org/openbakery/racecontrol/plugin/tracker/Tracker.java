@@ -49,13 +49,12 @@ public class Tracker implements Plugin, LapEventListener {
 	private RaceControl raceControl;
 
 	@Autowired
-	private QueryHelper queryHelper;
-
-	@Autowired
 	private SettingsService settingsService;
 
 	@Autowired
 	private JInSimClient insimClient;
+
+	private Lap fastestLap;
 
 	public Tracker() {
 		trackerPanel = new HashMap<Integer, Panel>();
@@ -90,12 +89,13 @@ public class Tracker implements Plugin, LapEventListener {
 			hidePanel(connectionLeaveResponse.getConnectionId());
 		} else if (response instanceof PitLaneResponse) {
 			Driver driver = raceControl.getRace().getDriverByPlayerId(((PitLaneResponse) response).getPlayerId());
-			updatePanel(driver.getConnectionId());
+			updatePanel(driver.getConnectionId(), null);
 		}
 
 	}
 
 	private void hidePanel(Integer connectionId) {
+		log.debug("hidePanel for {}", connectionId);
 		Panel panel = trackerPanel.get(connectionId);
 		if (panel != null) {
 			trackerPanel.remove(connectionId);
@@ -106,19 +106,25 @@ public class Tracker implements Plugin, LapEventListener {
 	private void showPanel(Integer connectionId) throws IOException {
 		// destroy the panel if one exists for this connectionID
 		hidePanel(connectionId);
+		log.debug("showPanel for {}", connectionId);
 
 		Panel panel = new Panel(135, 4);
 		panel.setColumns(25);
 		panel.add(new Button(connectionId, ""), 0);
 		panel.add(new Button(connectionId, ""), 0);
+		Button infoButton = new Button(connectionId, "");
+		infoButton.setVisible(false);
+		panel.add(infoButton, 0);
 
-		updatePanel(connectionId);
+		updatePanel(connectionId, null);
 
 		panel.setVisible(true);
 		trackerPanel.put(connectionId, panel);
 		}
 
-	public void updatePanel(Integer connectionId) {
+	public void updatePanel(Integer connectionId, Lap currentLap) {
+		log.debug("update panel for {}", connectionId);
+		log.debug("update panel with lap {}", currentLap);
 
 		Panel panel = trackerPanel.get(connectionId);
 		if (panel == null) {
@@ -136,130 +142,54 @@ public class Tracker implements Plugin, LapEventListener {
 
 		Button numberLapsButton = panel.get(0, 0);
 		//int numberLaps = getNumberLapsOnServerForDriver(driver);
-		numberLapsButton.setText("Laps left: " +  (settingsService.getTrackerSettings().getNumberLaps() - lap.getPosition()));
+		int lapsLeft = settingsService.getTrackerSettings().getNumberLaps() - lap.getAttempt();
+		if (lap.getPosition() > 0) {
+			numberLapsButton.setText("Laps left: " + lapsLeft + " - Pos: " + lap.getPosition());
+		} else {
+			numberLapsButton.setText("Laps left: " + lapsLeft);
+		}
 
 		Button lapTimeButton = panel.get(0, 1);
-		lapTimeButton.setText("Fastest Lap: " + InSimTime.toString(lap.getTime()) + " (" + lap.getNumber() + ")");
-
-	}
-
-/*
-	public void packetReceived(InSimResponse response) {
-		if (response instanceof HiddenMessageResponse) {
-			HiddenMessageResponse hiddenMessageResponse = (HiddenMessageResponse) response;
-			int connectionId = hiddenMessageResponse.getConnectionId();
-			String message = hiddenMessageResponse.getMessage();
-
-			if (message.startsWith("tracker")) {
-				try {
-					Driver driver = raceControl.getRace().getDriver(connectionId);
-
-					showTracker(new Integer(connectionId), driver.isAdmin());
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
-			}
-		} else if (response instanceof ButtonClickedResponse) {
-			processClickResponse((ButtonClickedResponse) response);
-		} else if (response instanceof TinyResponse) {
-			TinyResponse tinyResponse = (TinyResponse) response;
-			Tiny type = tinyResponse.getType();
-			if (type == Tiny.MULTIPLAYER_END || type == Tiny.RACE_END) {
-				for (Panel panel : trackerPanel.values()) {
-					panel.destroy();
-				}
-				trackerPanel.clear();
-			}
-		}
-	}
-
-	private void processClickResponse(ButtonClickedResponse response) {
-		Panel panel = trackerPanel.get(new Integer(response.getConnectionId()));
-		if (panel != null) {
-
-			Button closeButton = panel.get(0, panel.getRowCount(1));
-			if (response.getClickId() == closeButton.getId()) {
-				trackerPanel.remove(new Integer(response.getConnectionId()));
-				panel.destroy();
-				return;
-			}
-
-			for (int i = 0; i < panel.getRowCount(1); i++) {
-				Button button = panel.get(1, i);
-				if (button != null && button.getId() == response.getClickId()) {
-					String message = button.getText();
-					if (response instanceof ButtonTypeResponse) {
-						message += " - " + ((ButtonTypeResponse) response).getTypeInText();
-					}
-					log.debug("send button message: {}", message);
-
-					sendMessage(message);
-				}
-			}
-		}
-	}
-
-	private void showTracker(Integer connectionId, boolean isAdmin) throws IOException {
-		log.debug("show tracker connectionId = {}, isAdmin = {}", connectionId, isAdmin);
-		Panel panel = trackerPanel.get(connectionId);
-		if (panel != null) {
-			log.debug("tracker panel found, so hide it");
-			trackerPanel.remove(connectionId);
-			panel.destroy();
-			return;
-		}
-		panel = new Panel(20, 40);
-		panel.setColumns(10, 40, 15, 10, 15, 15);
+		lapTimeButton.setText("Fastest Lap: " + InSimTime.toString(lap.getTime()));
 
 		try {
-			List<Lap> lapList = trackerService.getFastestLap();
-			List<Profile> profiles = trackerService.getSignedUpDrivers();
-			Track track = trackerService.getTrack();
+			Button infoButton = panel.get(0, 2);
+			if (currentLap != null) {
 
-			int i = 1;
-			Lap previous = null;
-			for (Lap lap : lapList) {
-				panel.add(new Button(connectionId, Integer.toString(i++)), 0);
-				String name = lap.getDriver().getName();
-				for (Profile profile : profiles) {
-					if (profile.getLfsworldName().equalsIgnoreCase(lap.getDriver().getName())) {
-						name = profile.getFullName();
+				StringBuilder gapString = new StringBuilder();
+				int i = 0;
+				while(lap.getSplit(i) > 0) {
+
+					if (i > 0) {
+						gapString.append(" / ");
 					}
-				}
-				Button nameButton = new Button(connectionId, name);
-				if (isAdmin) {
-					nameButton.setClickable(this);
-					nameButton.setTypeIn(true);
-				}
-				panel.add(nameButton, 1);
-				panel.add(new Button(connectionId, InSimTime.toString(lap.getTime())), 2);
-				if (previous == null || lap.getTime() == 0) {
-					panel.add(new Button(connectionId, ""), 3);
-				} else {
-					int gap = previous.getTime() - lap.getTime();
-					panel.add(new Button(connectionId, InSimTime.toString(gap, true)), 3);
+					int gap = fastestLap.getSplit(i) - lap.getSplit(i);
+
+					gapString.append(InSimTime.toString(gap, true));
+					i++;
 				}
 
-				int time = 0;
-				for (int j = 0; j < track.getSplits(); j++) {
-					time += lap.getSplit(j);
-					panel.add(new Button(connectionId, InSimTime.toString(time)), 4 + j);
+				if (lap.isFinished()) {
+					gapString.append(" : ");
+					int gap = fastestLap.getTime() - lap.getTime();
+					gapString.append(InSimTime.toString(gap, true));
 				}
 
-				previous = lap;
+				if (gapString.length() > 0) {
+					infoButton.setText(gapString.toString());
+				}
+				infoButton.setVisible(gapString.length() > 0);
+
+			} else {
+				infoButton.setVisible(false);
 			}
-
-		} catch (PersistenceException e) {
-			log.error(e.getMessage(), e);
+		} catch (IOException ex) {
+			log.error(ex.getMessage(), ex);
 		}
-		Button closeButton = new Button(connectionId, "Close");
-		closeButton.setClickable(this);
-		panel.add(closeButton, 0);
-		panel.setVisible(true);
-		trackerPanel.put(connectionId, panel);
+
+
 	}
 
-	*/
 
 	public List<MenuItem> getMenuItems() {
 		return Arrays.asList(new MenuItem("Tracker", TrackerPage.class, -1), new MenuItem("Tracker Settings", TrackerSettingsPage.class, Visibility.AUTHENTICATED, 2));
@@ -267,24 +197,11 @@ public class Tracker implements Plugin, LapEventListener {
 
 	@Override
 	public void lapFinished(LapEvent event) {
-
-		updatePanel(event.getDriver().getConnectionId());
-
-		/*
-		TrackerSettings settings = settingsService.getTrackerSettings();
-
-		Lap lap = getFastestLapForDriver(event.getDriver());
-
-
-		if (event.getLap().getTime() == lap.getTime()) {
-			sendMessage("New fastest lap for " + event.getDriver().getName() + ": " + dateFormat.format(lap.getTime()));
-			// new fastest lap;
-		}
-
-		int numberLaps = getNumberLapsOnServerForDriver(event.getDriver());
-		sendMessage(event.getDriver().getName() + ": " + numberLaps + " of " + settings.getNumberLaps() + " completed");
-*/
+		log.debug("lapFinished");
+		updatePanel(event.getDriver().getConnectionId(), event.getLap());
 	}
+
+
 
 	private Lap getFastestLapForDriver(Driver driver) {
 
@@ -294,13 +211,17 @@ public class Tracker implements Plugin, LapEventListener {
 
 			log.debug("lapList {}", lapList);
 
-
+			if (lapList.size() > 0) {
+				log.debug("==> set fastest lap: {}", fastestLap);
+				fastestLap = lapList.get(0);
+			}
 
 			log.debug("==== DRIVER  {}", driver);
 			for (Lap lap : lapList) {
 				log.debug("lap.driver {}", lap.getDriver());
 
 				if (lap.getDriver().getName().equals(driver.getName())) {
+					log.debug("getFastestLapForDriver found: {}", lap);
 					return lap;
 				}
 			}
@@ -310,32 +231,14 @@ public class Tracker implements Plugin, LapEventListener {
 		}
 		return new Lap();
 
-
-		//return queryHelper.getFastestLapOnServerForDriver(settings.getCars(), settings.getTrack(), driver.getName(), settings.getNumberLaps());
 	}
 
-	private int getNumberLapsOnServerForDriver(Driver driver) {
-		TrackerSettings settings = settingsService.getTrackerSettings();
-		return queryHelper.getNumberLapsOnServerForDriver(settings.getTrack(), driver);
-	}
 
 	@Override
 	public void lapSplit(LapEvent event) {
-		updatePanel(event.getDriver().getConnectionId());
+		log.debug("lapSplit");
+		updatePanel(event.getDriver().getConnectionId(), event.getLap());
 	}
 
-/*
-	void sendMessage(String message) {
-		MessageRequest messageRequest = new MessageRequest();
-		messageRequest.setMessage(message);
-		try {
-			insimClient.send(messageRequest);
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
-
-
-	}
-*/
 
 }

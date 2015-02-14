@@ -70,7 +70,7 @@ public class LapListView extends ListView<Lap> {
 		item.add(new Label("name", name).setEscapeModelStrings(false));
 		item.add(new Label("car", lap.getDriver().getCarName()));
 		item.add(new Label("time", getTime(lap.getTime())));
-		item.add(new Label("number", lap.getNumber() + "/" + lap.getPosition()));
+		item.add(new Label("number", lap.getNumber() + "/" + lap.getAttempt()));
 
 		if (lap.getTime() == 0) {
 			item.add(new Label("gapPrevious", "-"));

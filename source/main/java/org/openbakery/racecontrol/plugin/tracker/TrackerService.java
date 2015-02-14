@@ -75,36 +75,14 @@ public class TrackerService {
 		}
 
 		Collections.sort(lapList, new LapComparator());
+
+		int position = 1;
+		for (Lap lap : lapList) {
+			lap.setPosition(position++);
+		}
 		log.debug("lapList: {}", lapList);
 		return lapList;
 
-
-
-		/*
-		List<Lap> lapList = queryHelper.getFastestsLaps(cars, track, profiles);
-
-		// add drivers that has not driven a lap yet
-		for (Profile profile : profiles) {
-			String name = profile.getLfsworldName();
-			boolean found = false;
-			for (Lap lap : lapList) {
-				if (lap.getDriver().getName().equalsIgnoreCase(name)) {
-					found = true;
-				}
-			}
-
-			if (!found) {
-				log.debug("no lap found for driver {} so add empty", profile.getLfsworldName());
-				Lap newLap = new Lap();
-				Driver newDriver = new Driver();
-				newDriver.setName(profile.getLfsworldName());
-				newLap.setDriver(newDriver);
-				lapList.add(newLap);
-			}
-
-		}
-		return lapList;
-		*/
 	}
 
 	public List<Profile> getSignedUpDrivers() throws PersistenceException {
