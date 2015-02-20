@@ -166,7 +166,7 @@ public class MainRaceControl extends AbstractControl {
 	public void calculate() throws PersistenceException {
 		Race race = raceControl.getRace();
 		if (race.hasRaceEntry()) {
-			if (!race.getRaceEntry().isQualifying()) {
+			if (!race.getRaceEntry().isQualifying() && !race.getRaceEntry().isPractice()) {
 				calculatePositionInLaps();
 				addUnfinishedRacers();
 			}
